@@ -1,12 +1,199 @@
 <!DOCTYPE html>
-<html>
+<html lang="es">
 <head>
-    <title>The Weeknd</title>
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>THE WEEKND — XO</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Oswald:wght@200;400;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet" />
 </head>
 <body>
-    <h1>The Weeknd</h1>
-    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/The_Weeknd_2018.jpg/640px-The_Weeknd_2018.jpg" width="300">
-    <p>Fan page dedicada a The Weeknd.</p>
+
+  <!-- ░░░ HERO ░░░ -->
+  <section class="hero">
+    <div class="hero__noise"></div>
+    <div class="hero__vignette"></div>
+
+    <div class="hero__content">
+      <p class="hero__eyebrow">XO — SINCE 2009</p>
+      <h1 class="hero__title" data-text="THE WEEKND">THE WEEKND</h1>
+      <p class="hero__subtitle">After Hours &nbsp;·&nbsp; Starboy &nbsp;·&nbsp; Dawn FM &nbsp;·&nbsp; Hurry Up Tomorrow</p>
+      <a href="#gallery" class="hero__cta">Entrar al mundo</a>
+    </div>
+
+    <div class="hero__scroll-hint">
+      <span></span>
+      <span></span>
+      <span></span>
+      SCROLL
+    </div>
+  </section>
+
+  <!-- ░░░ TICKER ░░░ -->
+  <div class="ticker" aria-hidden="true">
+    <div class="ticker__track">
+      <span>BLINDING LIGHTS</span>
+      <span>●</span>
+      <span>SAVE YOUR TEARS</span>
+      <span>●</span>
+      <span>STARBOY</span>
+      <span>●</span>
+      <span>CAN'T FEEL MY FACE</span>
+      <span>●</span>
+      <span>EARNED IT</span>
+      <span>●</span>
+      <span>THE HILLS</span>
+      <span>●</span>
+      <span>AFTER HOURS</span>
+      <span>●</span>
+      <span>MOTH TO A FLAME</span>
+      <span>●</span>
+      <span>SACRIFICE</span>
+      <span>●</span>
+      <span>IS THERE SOMEONE ELSE?</span>
+      <span>●</span>
+      <!-- repeat for seamless loop -->
+      <span>BLINDING LIGHTS</span>
+      <span>●</span>
+      <span>SAVE YOUR TEARS</span>
+      <span>●</span>
+      <span>STARBOY</span>
+      <span>●</span>
+      <span>CAN'T FEEL MY FACE</span>
+      <span>●</span>
+      <span>EARNED IT</span>
+      <span>●</span>
+      <span>THE HILLS</span>
+      <span>●</span>
+      <span>AFTER HOURS</span>
+      <span>●</span>
+      <span>MOTH TO A FLAME</span>
+      <span>●</span>
+      <span>SACRIFICE</span>
+      <span>●</span>
+      <span>IS THERE SOMEONE ELSE?</span>
+      <span>●</span>
+    </div>
+  </div>
+
+  <!-- ░░░ INTRO STATEMENT ░░░ -->
+  <section class="statement">
+    <div class="statement__inner">
+      <div class="statement__line"></div>
+      <blockquote class="statement__quote">
+        "I've made a lot of mistakes and have had to pay for them."
+      </blockquote>
+      <p class="statement__attr">— Abel Makkonen Tesfaye</p>
+      <div class="statement__line"></div>
+    </div>
+  </section>
+
+  <!-- ░░░ GALLERY ░░░ -->
+  <section class="gallery" id="gallery">
+    <div class="gallery__header">
+      <p class="gallery__eyebrow">Álbumes &amp; Eras</p>
+      <h2 class="gallery__title">EL UNIVERSO<br>OSCURO</h2>
+    </div>
+
+    <div class="gallery__grid">
+
+      <article class="gallery__item gallery__item--lg" data-era="After Hours">
+        <img src="dewiken1.jpg" alt="The Weeknd — After Hours" loading="lazy" />
+        <div class="gallery__overlay">
+          <span class="gallery__era">2020</span>
+          <h3 class="gallery__name">After Hours</h3>
+          <p class="gallery__desc">La era del traje rojo. Sangre, neones y oscuridad total.</p>
+        </div>
+      </article>
+
+      <article class="gallery__item" data-era="Starboy">
+        <img src="dewiken2.jpg" alt="The Weeknd — Starboy" loading="lazy" />
+        <div class="gallery__overlay">
+          <span class="gallery__era">2016</span>
+          <h3 class="gallery__name">Starboy</h3>
+          <p class="gallery__desc">La cruz, el desierto, la fama que destruye.</p>
+        </div>
+      </article>
+
+      <article class="gallery__item" data-era="Dawn FM">
+        <img src="dewiken3.jpg" alt="The Weeknd — Dawn FM" loading="lazy" />
+        <div class="gallery__overlay">
+          <span class="gallery__era">2022</span>
+          <h3 class="gallery__name">Dawn FM</h3>
+          <p class="gallery__desc">Radio desde el purgatorio. 103.5 Dawn FM.</p>
+        </div>
+      </article>
+
+      <article class="gallery__item" data-era="Hurry Up Tomorrow">
+        <img src="dewiken4.jpg" alt="The Weeknd — Hurry Up Tomorrow" loading="lazy" />
+        <div class="gallery__overlay">
+          <span class="gallery__era">2025</span>
+          <h3 class="gallery__name">Hurry Up Tomorrow</h3>
+          <p class="gallery__desc">El último capítulo. El final de The Weeknd.</p>
+        </div>
+      </article>
+
+      <article class="gallery__item gallery__item--wide" data-era="Trilogy">
+        <img src="dewiken5.jpg" alt="The Weeknd — Trilogy" loading="lazy" />
+        <div class="gallery__overlay">
+          <span class="gallery__era">2011–2012</span>
+          <h3 class="gallery__name">Trilogy</h3>
+          <p class="gallery__desc">Donde todo comenzó. Mixtapes que redefinieron el R&amp;B.</p>
+        </div>
+      </article>
+
+    </div>
+  </section>
+
+  <!-- ░░░ STATS ░░░ -->
+  <section class="stats">
+    <div class="stats__inner">
+      <div class="stats__item">
+        <span class="stats__number">100M+</span>
+        <span class="stats__label">Oyentes mensuales en Spotify</span>
+      </div>
+      <div class="stats__divider"></div>
+      <div class="stats__item">
+        <span class="stats__number">4</span>
+        <span class="stats__label">Grammys ganados</span>
+      </div>
+      <div class="stats__divider"></div>
+      <div class="stats__item">
+        <span class="stats__number">7</span>
+        <span class="stats__label">Álbumes de estudio</span>
+      </div>
+      <div class="stats__divider"></div>
+      <div class="stats__item">
+        <span class="stats__number">XO</span>
+        <span class="stats__label">Hugs &amp; Kisses, forever</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ░░░ BIG LYRIC ░░░ -->
+  <section class="lyric">
+    <div class="lyric__inner">
+      <p class="lyric__tag">Blinding Lights — After Hours</p>
+      <h2 class="lyric__text">
+        I've been tryna call<br>
+        I've been on my own for long enough<br>
+        <em>Maybe you can show me how to love,<br>
+        maybe</em>
+      </h2>
+    </div>
+    <div class="lyric__bg-text" aria-hidden="true">XO</div>
+  </section>
+
+  <!-- ░░░ FOOTER ░░░ -->
+  <footer class="footer">
+    <div class="footer__xo">XO</div>
+    <p class="footer__name">THE WEEKND</p>
+    <p class="footer__credit">Abel Makkonen Tesfaye &nbsp;·&nbsp; Toronto, Canadá &nbsp;·&nbsp; 1990</p>
+    <div class="footer__line"></div>
+    <p class="footer__small">Diseño fan-made — sin fines comerciales</p>
+  </footer>
+
 </body>
 </html>
