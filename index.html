@@ -495,6 +495,110 @@ footer p+p{margin-top:6px;opacity:0.55;}
   .grid-2,.dc-grid,.triple-constraint,.canvas-wrap{grid-template-columns:1fr;}
   .nav-links{display:none;}
 }
+
+/* ============ MENÚ PRINCIPAL DE PARCIALES ============ */
+.nav-home-btn{
+  display:flex;align-items:center;gap:6px;
+  background:var(--blue-50);color:var(--blue-700);border:1px solid var(--blue-100);
+  font-size:0.72rem;font-weight:600;padding:6px 12px;border-radius:8px;
+  cursor:pointer;transition:background .2s,color .2s;
+}
+.nav-home-btn:hover{background:var(--blue-600);color:#fff;}
+.nav-home-btn svg{width:13px;height:13px;}
+.nav-parcial-label{
+  font-size:0.72rem;font-weight:700;color:var(--blue-700);
+  background:var(--blue-100);padding:5px 12px;border-radius:100px;
+  letter-spacing:0.03em;
+}
+
+.app-view{display:none;}
+.app-view.active{display:block;}
+
+.menu-wrap{max-width:1100px;margin:0 auto;padding:0 2rem 4rem;position:relative;z-index:1;}
+.menu-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:1rem;}
+.menu-card{
+  background:#fff;border:1px solid var(--blue-100);border-radius:18px;
+  padding:1.6rem 1.4rem;text-align:left;cursor:pointer;position:relative;overflow:hidden;
+  transition:transform .25s cubic-bezier(.22,1,.36,1),box-shadow .25s ease,border-color .25s ease;
+  display:flex;flex-direction:column;gap:10px;min-height:210px;
+}
+.menu-card::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:4px;
+  background:linear-gradient(90deg,var(--blue-400),var(--cyan-500));
+  transform:scaleX(0);transform-origin:left;transition:transform .3s ease;
+}
+.menu-card:hover{transform:translateY(-6px);box-shadow:0 18px 40px rgba(37,99,235,0.14);border-color:var(--blue-300);}
+.menu-card:hover::before{transform:scaleX(1);}
+.menu-card.locked{cursor:default;opacity:0.72;}
+.menu-card.locked:hover{transform:none;box-shadow:none;border-color:var(--blue-100);}
+.menu-card.locked::before{display:none;}
+.menu-card-top{display:flex;align-items:center;justify-content:space-between;}
+.menu-card-num{
+  font-family:'Sora',sans-serif;font-weight:800;font-size:1.6rem;color:var(--blue-200);
+  letter-spacing:-0.03em;
+}
+.menu-card-status{
+  font-size:0.62rem;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;
+  padding:3px 10px;border-radius:100px;white-space:nowrap;
+}
+.menu-card-status.done{background:#DCFCE7;color:#166534;}
+.menu-card-status.current{background:var(--blue-100);color:var(--blue-700);}
+.menu-card-status.soon{background:var(--slate-100);color:var(--slate-600);}
+.menu-card h3{
+  font-family:'Sora',sans-serif;font-weight:700;font-size:1.05rem;color:var(--blue-900);
+  letter-spacing:-0.01em;
+}
+.menu-card p{font-size:0.8rem;color:var(--slate-600);line-height:1.55;flex:1;}
+.menu-card-topics{list-style:none;margin-top:2px;}
+.menu-card-topics li{
+  font-size:0.72rem;color:var(--slate-600);padding:2px 0 2px 14px;position:relative;line-height:1.5;
+}
+.menu-card-topics li::before{
+  content:'';position:absolute;left:0;top:9px;width:4px;height:4px;border-radius:50%;background:var(--blue-400);
+}
+.menu-card-cta{
+  font-size:0.75rem;font-weight:700;color:var(--blue-600);display:flex;align-items:center;gap:5px;
+  margin-top:4px;
+}
+.menu-card-cta svg{width:13px;height:13px;transition:transform .2s;}
+.menu-card:hover .menu-card-cta svg{transform:translateX(3px);}
+
+.back-row{
+  display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;
+  padding:1.5rem 0 0.4rem;
+}
+.back-btn{
+  display:inline-flex;align-items:center;gap:6px;background:#fff;border:1px solid var(--blue-100);
+  color:var(--blue-700);font-size:0.78rem;font-weight:600;padding:7px 14px;border-radius:9px;
+  cursor:pointer;transition:background .2s,transform .2s;
+}
+.back-btn:hover{background:var(--blue-50);transform:translateX(-2px);}
+.back-btn svg{width:14px;height:14px;}
+
+.subnav{display:flex;gap:4px;flex-wrap:wrap;}
+.subnav a{
+  font-size:0.7rem;font-weight:500;color:var(--slate-600);text-decoration:none;
+  padding:5px 9px;border-radius:6px;transition:all .2s;background:#fff;border:1px solid var(--blue-100);
+}
+.subnav a:hover{background:var(--blue-50);color:var(--blue-700);}
+.subnav a.active{background:var(--blue-100);color:var(--blue-700);border-color:var(--blue-200);}
+
+.soon-panel{
+  background:linear-gradient(135deg,var(--blue-50),#EFF6FF);border:1px dashed var(--blue-300);
+  border-radius:18px;padding:3rem 2rem;text-align:center;max-width:640px;margin:2rem auto 0;
+}
+.soon-panel .soon-icon{
+  width:56px;height:56px;border-radius:14px;background:#fff;border:1px solid var(--blue-200);
+  display:flex;align-items:center;justify-content:center;margin:0 auto 1rem;
+}
+.soon-panel .soon-icon svg{width:26px;height:26px;color:var(--blue-500);}
+.soon-panel h3{font-family:'Sora',sans-serif;font-weight:700;font-size:1.1rem;color:var(--blue-900);margin-bottom:0.6rem;}
+.soon-panel p{font-size:0.85rem;color:var(--slate-600);line-height:1.7;}
+
+@media(max-width:720px){
+  .menu-grid{grid-template-columns:1fr;}
+  .subnav{display:none;}
+}
 </style>
 </head>
 <body>
@@ -506,50 +610,140 @@ footer p+p{margin-top:6px;opacity:0.55;}
 
 <nav>
   <div class="nav-inner">
-    <div class="nav-logo">
+    <div class="nav-logo" style="cursor:pointer;" onclick="setView('home')">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
         <rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/>
       </svg>
       Metodología · Desarrollo de Proyectos TI
     </div>
-    <div class="nav-links">
-      <a href="#gestion">Gestión TI</a>
-      <a href="#tipos">Tipos de Proyectos</a>
-      <a href="#certs">Certificaciones</a>
-      <a href="#agile">Metodologías Ágiles</a>
-      <a href="#normas">Normas y Estándares</a>
-      <a href="#dc">Centros de Datos</a>
-      <a href="#pmbok">PMBOK</a>
-      <a href="#canvas">Modelo Canvas</a>
-      <a href="#complementos">Complementos</a>
+    <div class="nav-links" id="navLinks">
+      <!-- p1 -->
+      <a href="#gestion" data-parcial="p1">Gestión TI</a>
+      <a href="#tipos" data-parcial="p1">Tipos de Proyectos</a>
+      <a href="#certs" data-parcial="p1">Certificaciones</a>
+      <a href="#agile" data-parcial="p1">Metodologías Ágiles</a>
+      <a href="#normas" data-parcial="p1">Normas y Estándares</a>
+      <a href="#dc" data-parcial="p1">Centros de Datos</a>
+      <!-- p2 -->
+      <a href="#pmbok" data-parcial="p2">PMBOK</a>
+      <a href="#canvas" data-parcial="p2">Modelo Canvas</a>
+      <a href="#complementos" data-parcial="p2">Complementos</a>
     </div>
+    <button class="nav-home-btn" id="navHomeBtn" onclick="setView('home')" style="display:none;">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      Menú de parciales
+    </button>
   </div>
 </nav>
 
-<div class="hero">
-  <div class="hero-badge">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="11" height="11"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
-    Ingeniería en Desarrollo de Software
+<!-- ============ HOME: MENÚ DE 3 PARCIALES ============ -->
+<div class="app-view active" id="view-home">
+  <div class="hero">
+    <div class="hero-badge">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="11" height="11"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+      Ingeniería en Desarrollo de Software
+    </div>
+    <h1>Metodología para el <span>Desarrollo de Proyectos TI</span></h1>
+    <p>Marco de referencia técnico y normativo para la gestión profesional de proyectos de tecnologías de la información: desde su iniciación hasta el cierre, abarcando estándares internacionales, marcos regulatorios y herramientas de control.</p>
+    <div class="hero-meta">
+      <span>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+        3 parciales · 9 módulos temáticos
+      </span>
+      <span>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+        Fuentes verificadas
+      </span>
+      <span>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+        Normas ISO · IEEE · PMI · CMMI
+      </span>
+    </div>
   </div>
-  <h1>Metodología para el <span>Desarrollo de Proyectos TI</span></h1>
-  <p>Marco de referencia técnico y normativo para la gestión profesional de proyectos de tecnologías de la información: desde su iniciación hasta el cierre, abarcando estándares internacionales, marcos regulatorios y herramientas de control.</p>
-  <div class="hero-meta">
-    <span>
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
-      9 módulos temáticos
-    </span>
-    <span>
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-      Fuentes verificadas
-    </span>
-    <span>
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-      Normas ISO · IEEE · PMI · CMMI
-    </span>
+
+  <div class="menu-wrap">
+    <div class="section-header reveal" style="padding-top:0.5rem;">
+      <div class="section-header-text">
+        <h2 style="font-size:1.15rem;">Selecciona un parcial</h2>
+      </div>
+    </div>
+    <div class="menu-grid reveal">
+
+      <div class="menu-card" onclick="setView('p1')">
+        <div class="menu-card-top">
+          <span class="menu-card-num">01</span>
+          <span class="menu-card-status done">Publicado</span>
+        </div>
+        <h3>Primer Parcial</h3>
+        <p>Fundamentos de gestión, tipos de proyectos, certificaciones, metodologías ágiles, normas/estándares y centros de datos.</p>
+        <ul class="menu-card-topics">
+          <li>Imágenes ISO para las prácticas</li>
+          <li>Centro de Datos, qué son y cómo funcionan</li>
+          <li>Normas y estándares de TI</li>
+          <li>Metodologías ágiles más utilizadas</li>
+          <li>Certificaciones IT mejor cotizadas</li>
+          <li>Tipos de proyectos y marco regulatorio</li>
+        </ul>
+        <span class="menu-card-cta">Ver contenido
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+        </span>
+      </div>
+
+      <div class="menu-card" onclick="setView('p2')">
+        <div class="menu-card-top">
+          <span class="menu-card-num">02</span>
+          <span class="menu-card-status current">En curso</span>
+        </div>
+        <h3>Segundo Parcial</h3>
+        <p>Guía del PMBOK, Modelo Canvas, metodología de la investigación y cómo obtener un trabajo como Arquitecto de Nube.</p>
+        <ul class="menu-card-topics">
+          <li>Guía del PMBOK y Metodología CANVAS</li>
+          <li>Cómo obtener un trabajo como Arquitecto de Nube</li>
+          <li>Metodología de la Investigación</li>
+          <li>Metodologías para el Desarrollo de Software</li>
+        </ul>
+        <span class="menu-card-cta">Ver contenido
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+        </span>
+      </div>
+
+      <div class="menu-card locked" onclick="setView('p3')">
+        <div class="menu-card-top">
+          <span class="menu-card-num">03</span>
+          <span class="menu-card-status soon">Próximamente</span>
+        </div>
+        <h3>Tercer Parcial</h3>
+        <p>Este espacio se habilitará cuando Classroom publique los temas del tercer parcial.</p>
+        <ul class="menu-card-topics">
+          <li>Contenido pendiente de publicación</li>
+        </ul>
+        <span class="menu-card-cta" style="color:var(--slate-600);">Ver estado
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+        </span>
+      </div>
+
+    </div>
   </div>
 </div>
 
+<!-- ============ VISTA: PRIMER PARCIAL ============ -->
+<div class="app-view" id="view-p1">
 <div class="main">
+
+<div class="back-row reveal">
+  <button class="back-btn" onclick="setView('home')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+    Menú de parciales
+  </button>
+  <div class="subnav">
+    <a href="#gestion">Gestión TI</a>
+    <a href="#tipos">Tipos de Proyectos</a>
+    <a href="#certs">Certificaciones</a>
+    <a href="#agile">Metodologías Ágiles</a>
+    <a href="#normas">Normas y Estándares</a>
+    <a href="#dc">Centros de Datos</a>
+  </div>
+</div>
 
 <!-- ------------------------------------------------------
      MÓDULO 0: GESTIÓN DE PROYECTOS TI
@@ -1279,6 +1473,31 @@ footer p+p{margin-top:6px;opacity:0.55;}
   </tbody>
 </table>
 
+</div>
+</div>
+<!-- ============ FIN VISTA PRIMER PARCIAL ============ -->
+
+<!-- ============ VISTA: SEGUNDO PARCIAL ============ -->
+<div class="app-view" id="view-p2">
+<div class="main">
+
+<div class="back-row reveal">
+  <button class="back-btn" onclick="setView('home')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+    Menú de parciales
+  </button>
+  <div class="subnav">
+    <a href="#pmbok">PMBOK</a>
+    <a href="#canvas">Modelo Canvas</a>
+    <a href="#complementos">Complementos</a>
+  </div>
+</div>
+
+<div class="highlight reveal">
+  <h3>Contenido de este parcial</h3>
+  <p>Este bloque cubre la <strong>Guía del PMBOK y la Metodología Canvas</strong>, la <strong>Metodología de la Investigación</strong> y cómo obtener un trabajo como <strong>Arquitecto de Nube</strong>. El tema "Metodologías para el Desarrollo de Software" de Classroom se retoma aquí de forma transversal: PMBOK y Canvas son, en sí mismos, metodologías para estructurar el desarrollo de un proyecto de software, y se apoyan en los marcos de trabajo ágiles ya revisados en el primer parcial.</p>
+</div>
+
 <!-- ------------------------------------------------------
      MÓDULO 6: PMBOK
 ------------------------------------------------------ -->
@@ -1403,8 +1622,22 @@ footer p+p{margin-top:6px;opacity:0.55;}
   <div class="canvas-image-frame">
     <img src="canvassweetmarket.png" alt="Business Model Canvas del proyecto Sweet Market" loading="lazy">
     <div class="canvas-caption">
-      <span>Elaborado por el equipo · Ejercicio de clase</span>
+      <span>Elaborado por Noel Pacheco</span>
       <strong>Canvas — Sweet Market</strong>
+    </div>
+  </div>
+  <div class="canvas-image-frame">
+    <img src="modelo_canvas.png" alt="Business Model Canvas del proyecto Sweet Market" loading="lazy">
+    <div class="canvas-caption">
+      <span>Elaborado por Diego Martinez</span>
+      <strong>Canvas — Gimnasio FitZone</strong>
+    </div>
+  </div>
+     <div class="canvas-image-frame">
+    <img src="edwin.jpeg" alt="Business Model Canvas del proyecto Sweet Market" loading="lazy">
+    <div class="canvas-caption">
+      <span>Elaborado por Edwin Calva</span>
+      <strong>Canvas — La mafia del sabor</strong>
     </div>
   </div>
   <div class="canvas-blocks">
@@ -1460,28 +1693,97 @@ footer p+p{margin-top:6px;opacity:0.55;}
 </div>
 
 </div>
+</div>
+<!-- ============ FIN VISTA SEGUNDO PARCIAL ============ -->
+
+<!-- ============ VISTA: TERCER PARCIAL (PRÓXIMAMENTE) ============ -->
+<div class="app-view" id="view-p3">
+<div class="main">
+
+<div class="back-row reveal">
+  <button class="back-btn" onclick="setView('home')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+    Menú de parciales
+  </button>
+  <div class="subnav"></div>
+</div>
+
+<div class="soon-panel reveal">
+  <div class="soon-icon">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+  </div>
+  <h3>Tercer Parcial — Próximamente</h3>
+  <p>Todavía no se han publicado los temas del tercer parcial en Classroom. En cuanto estén disponibles, este espacio se llenará con el mismo formato y nivel de detalle que los parciales anteriores.</p>
+</div>
+
+</div>
+</div>
+<!-- ============ FIN VISTA TERCER PARCIAL ============ -->
 
 <button class="to-top" id="toTopBtn" aria-label="Volver arriba">
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/></svg>
 </button>
 
 <footer>
-  <p>Metodología para el Desarrollo de Proyectos TI — Ingeniería en Desarrollo de Software · Kevin Noel Pacheco Magaña </p>
+  <p>Metodología para el Desarrollo de Proyectos TI — Ingeniería en Desarrollo de Software</p>
   <p>Fuentes: IT Masters Mag · ISACA · PMI · ISO · The Open Group · Uptime Institute · IEEE</p>
 </footer>
 
 <script>
+// ============ VIEW SWITCHING (menú de 3 parciales) ============
+const allViews = document.querySelectorAll('.app-view');
+const navHomeBtn = document.getElementById('navHomeBtn');
+const navLinksBar = document.getElementById('navLinks');
+
+function setView(name){
+  allViews.forEach(v=>v.classList.remove('active'));
+  const target = document.getElementById('view-' + name);
+  if(target) target.classList.add('active');
+
+  // top bar: on home show the topic quick-links, otherwise show "Menú de parciales"
+  if(name === 'home'){
+    navHomeBtn.style.display = 'none';
+    navLinksBar.style.display = '';
+  } else {
+    navHomeBtn.style.display = '';
+    navLinksBar.style.display = 'none';
+  }
+
+  window.scrollTo({top:0, behavior:'instant' in window ? 'instant' : 'auto'});
+  updateProgress();
+
+  // reveal content already in the newly shown view (no scroll animation needed on switch)
+  target && target.querySelectorAll('.reveal').forEach(el=>el.classList.add('in-view'));
+
+  updateActiveNav();
+}
+
+// nav-links (only meaningful while on home, they jump into a parcial + section)
+document.querySelectorAll('.nav-links a[data-parcial]').forEach(a=>{
+  a.addEventListener('click', (e)=>{
+    e.preventDefault();
+    const parcial = a.getAttribute('data-parcial');
+    const hash = a.getAttribute('href');
+    setView(parcial);
+    requestAnimationFrame(()=>{
+      const el = document.querySelector(hash);
+      if(el) el.scrollIntoView({behavior:'smooth', block:'start'});
+    });
+  });
+});
+
 // scroll progress bar
 const progressBar = document.getElementById('scrollProgress');
 function updateProgress(){
   const h = document.documentElement;
-  const scrolled = (h.scrollTop) / (h.scrollHeight - h.clientHeight) * 100;
+  const denom = (h.scrollHeight - h.clientHeight);
+  const scrolled = denom > 0 ? (h.scrollTop) / denom * 100 : 0;
   progressBar.style.width = scrolled + '%';
 }
 document.addEventListener('scroll', updateProgress, {passive:true});
 updateProgress();
 
-// scroll reveal
+// scroll reveal (for elements revealed by normal scrolling within the active view)
 const revealEls = document.querySelectorAll('.reveal');
 const io = new IntersectionObserver((entries)=>{
   entries.forEach(entry=>{
@@ -1492,17 +1794,28 @@ const io = new IntersectionObserver((entries)=>{
   });
 },{threshold:0.12, rootMargin:'0px 0px -40px 0px'});
 revealEls.forEach(el=>io.observe(el));
+// reveal whatever is already visible in the initial (home) view
+document.getElementById('view-home').querySelectorAll('.reveal').forEach(el=>el.classList.add('in-view'));
 
-// active nav link highlighting
-const navLinks = document.querySelectorAll('.nav-links a');
-const sections = Array.from(navLinks).map(a=>document.querySelector(a.getAttribute('href'))).filter(Boolean);
+// active sub-nav link highlighting (works for both the home quick-links and each parcial's subnav)
 function updateActiveNav(){
-  let currentId = '';
-  sections.forEach(sec=>{
-    const rect = sec.getBoundingClientRect();
-    if(rect.top <= 120){ currentId = '#' + sec.id; }
+  const activeView = document.querySelector('.app-view.active');
+  if(!activeView) return;
+  const linkGroups = [
+    Array.from(document.querySelectorAll('.nav-links a[data-parcial]')),
+    Array.from(activeView.querySelectorAll('.subnav a'))
+  ];
+  linkGroups.forEach(links=>{
+    let currentId = '';
+    links.forEach(a=>{
+      const sec = document.querySelector(a.getAttribute('href'));
+      if(sec){
+        const rect = sec.getBoundingClientRect();
+        if(rect.top <= 120){ currentId = '#' + sec.id; }
+      }
+    });
+    links.forEach(a=>a.classList.toggle('active', a.getAttribute('href') === currentId));
   });
-  navLinks.forEach(a=>a.classList.toggle('active', a.getAttribute('href') === currentId));
 }
 document.addEventListener('scroll', updateActiveNav, {passive:true});
 updateActiveNav();
