@@ -1,1815 +1,441 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;600;700;800&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-<style>
-*{margin:0;padding:0;box-sizing:border-box;}
-:root{
-  --blue-50:#EFF6FF;--blue-100:#DBEAFE;--blue-200:#BFDBFE;--blue-300:#93C5FD;
-  --blue-400:#60A5FA;--blue-500:#3B82F6;--blue-600:#2563EB;--blue-700:#1D4ED8;
-  --blue-800:#1E40AF;--blue-900:#1E3A8A;--blue-950:#172554;
-  --cyan-400:#22D3EE;--cyan-500:#06B6D4;--cyan-600:#0891B2;
-  --amber-400:#FBBF24;--amber-500:#F59E0B;
-  --slate-50:#F8FAFC;--slate-100:#F1F5F9;--slate-200:#E2E8F0;
-  --slate-600:#475569;--slate-700:#334155;--slate-800:#1E293B;
-}
-html{scroll-behavior:smooth;}
-body{
-  font-family:'Inter',sans-serif;
-  background:linear-gradient(160deg,#EFF6FF 0%,#F0F9FF 40%,#E0F2FE 100%);
-  color:var(--slate-800);min-height:100vh;overflow-x:hidden;
-  position:relative;
-}
-
-/* ambient background blobs */
-.bg-blob{position:fixed;border-radius:50%;filter:blur(80px);opacity:0.25;z-index:0;pointer-events:none;animation:drift 22s ease-in-out infinite;}
-.bg-blob.b1{width:420px;height:420px;background:var(--blue-300);top:-120px;left:-140px;animation-delay:0s;}
-.bg-blob.b2{width:360px;height:360px;background:var(--cyan-400);bottom:5%;right:-120px;animation-delay:-8s;}
-.bg-blob.b3{width:300px;height:300px;background:var(--blue-400);top:45%;left:45%;animation-delay:-14s;opacity:0.15;}
-@keyframes drift{
-  0%,100%{transform:translate(0,0) scale(1);}
-  33%{transform:translate(30px,-40px) scale(1.08);}
-  66%{transform:translate(-25px,25px) scale(0.95);}
-}
-@media (prefers-reduced-motion:reduce){
-  .bg-blob{animation:none;}
-  html{scroll-behavior:auto;}
-}
-
-/* scroll progress bar */
-.scroll-progress{position:fixed;top:0;left:0;height:3px;background:linear-gradient(90deg,var(--cyan-500),var(--blue-600));width:0%;z-index:9999;transition:width .1s ease-out;box-shadow:0 0 8px rgba(37,99,235,0.5);}
-
-/* NAV */
-nav{
-  background:rgba(255,255,255,0.9);backdrop-filter:blur(12px);
-  border-bottom:1px solid var(--blue-100);
-  padding:0 2rem;position:sticky;top:0;z-index:100;
-}
-.nav-inner{
-  max-width:1100px;margin:0 auto;
-  display:flex;align-items:center;justify-content:space-between;height:58px;
-}
-.nav-logo{
-  font-family:'Sora',sans-serif;font-weight:700;font-size:1rem;
-  color:var(--blue-700);letter-spacing:-0.02em;display:flex;align-items:center;gap:8px;
-}
-.nav-logo svg{width:20px;height:20px;}
-.nav-links{display:flex;gap:4px;flex-wrap:wrap;}
-.nav-links a{
-  font-size:0.72rem;font-weight:500;color:var(--slate-600);
-  text-decoration:none;padding:5px 9px;border-radius:6px;transition:all .2s;
-  position:relative;
-}
-.nav-links a:hover{background:var(--blue-50);color:var(--blue-700);}
-.nav-links a.active{background:var(--blue-100);color:var(--blue-700);}
-
-/* HERO */
-.hero{
-  max-width:1100px;margin:0 auto;padding:3.5rem 2rem 2rem;text-align:center;
-  position:relative;z-index:1;
-}
-.hero-badge{
-  display:inline-flex;align-items:center;gap:6px;
-  background:var(--blue-100);color:var(--blue-700);
-  font-size:0.68rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;
-  padding:4px 14px;border-radius:100px;margin-bottom:1rem;
-  opacity:0;animation:fadeUp .6s ease forwards;
-}
-.hero h1{
-  font-family:'Sora',sans-serif;font-weight:700;
-  font-size:clamp(1.7rem,4vw,2.7rem);color:var(--blue-900);
-  line-height:1.15;letter-spacing:-0.03em;margin-bottom:1rem;
-  opacity:0;animation:fadeUp .6s ease .08s forwards;
-}
-.hero h1 span{
-  background:linear-gradient(90deg,var(--blue-500),var(--cyan-500),var(--blue-600));
-  background-size:200% auto;
-  -webkit-background-clip:text;background-clip:text;color:transparent;
-  animation:shine 5s linear infinite;
-}
-@keyframes shine{to{background-position:200% center;}}
-.hero p{
-  font-size:0.92rem;color:var(--slate-600);max-width:580px;
-  margin:0 auto 1.8rem;line-height:1.7;
-  opacity:0;animation:fadeUp .6s ease .16s forwards;
-}
-.hero-meta{display:flex;justify-content:center;gap:2.5rem;flex-wrap:wrap;opacity:0;animation:fadeUp .6s ease .24s forwards;}
-.hero-meta span{
-  font-size:0.75rem;color:var(--slate-600);
-  display:flex;align-items:center;gap:5px;
-}
-@keyframes fadeUp{from{opacity:0;transform:translateY(14px);}to{opacity:1;transform:translateY(0);}}
-
-/* MAIN */
-.main{max-width:1100px;margin:0 auto;padding:1.5rem 2rem 4rem;position:relative;z-index:1;}
-
-/* reveal-on-scroll */
-.reveal{opacity:0;transform:translateY(22px);transition:opacity .6s cubic-bezier(.22,1,.36,1),transform .6s cubic-bezier(.22,1,.36,1);}
-.reveal.in-view{opacity:1;transform:translateY(0);}
-
-/* SECTION HEADER */
-.section-header{
-  display:flex;align-items:flex-start;gap:14px;
-  margin-bottom:1.3rem;padding-top:2.8rem;
-}
-.section-icon{
-  width:42px;height:42px;border-radius:10px;flex-shrink:0;
-  display:flex;align-items:center;justify-content:center;
-  transition:transform .3s ease;
-}
-.section-header:hover .section-icon{transform:rotate(-6deg) scale(1.06);}
-.section-icon svg{width:19px;height:19px;}
-.section-icon.blue{background:var(--blue-100);}
-.section-icon.blue svg{color:var(--blue-600);}
-.section-icon.cyan{background:#E0F7FA;}
-.section-icon.cyan svg{color:var(--cyan-600);}
-.section-icon.amber{background:#FEF3C7;}
-.section-icon.amber svg{color:#B45309;}
-.section-header-text h2{
-  font-family:'Sora',sans-serif;font-weight:700;font-size:1.15rem;
-  color:var(--blue-900);letter-spacing:-0.02em;margin-bottom:3px;
-}
-.section-header-text p{font-size:0.8rem;color:var(--slate-600);line-height:1.5;}
-.divider{height:1px;background:linear-gradient(90deg,var(--blue-200),transparent);margin-bottom:1.3rem;}
-
-/* GRIDS */
-.grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:13px;margin-bottom:13px;}
-.grid-2{display:grid;grid-template-columns:repeat(2,1fr);gap:13px;margin-bottom:13px;}
-.grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:13px;margin-bottom:13px;}
-
-/* CARD */
-.card{
-  background:#fff;border-radius:13px;border:1px solid var(--blue-100);
-  padding:1.15rem 1.25rem;
-  transition:transform .25s cubic-bezier(.22,1,.36,1),box-shadow .25s ease,border-color .25s ease;
-  position:relative;overflow:hidden;
-}
-.card::before{
-  content:'';position:absolute;top:0;left:0;right:0;height:3px;
-  background:linear-gradient(90deg,var(--blue-400),var(--blue-600));
-  opacity:0;transition:opacity .2s;
-}
-.card:hover{transform:translateY(-4px);box-shadow:0 14px 32px rgba(37,99,235,0.12);border-color:var(--blue-200);}
-.card:hover::before{opacity:1;}
-.card-tag{
-  font-size:0.63rem;font-weight:700;letter-spacing:0.09em;text-transform:uppercase;
-  color:var(--blue-500);margin-bottom:0.45rem;display:block;
-}
-.card h3{
-  font-family:'Sora',sans-serif;font-weight:600;font-size:0.9rem;
-  color:var(--blue-900);margin-bottom:0.45rem;line-height:1.3;
-}
-.card p{font-size:0.79rem;color:var(--slate-600);line-height:1.6;}
-
-/* FEATURE LIST */
-.feature-list{list-style:none;margin-top:0.65rem;}
-.feature-list li{
-  font-size:0.78rem;color:var(--slate-600);
-  padding:3px 0 3px 17px;position:relative;line-height:1.5;
-}
-.feature-list li::before{
-  content:'';position:absolute;left:0;top:10px;
-  width:5px;height:5px;border-radius:50%;background:var(--blue-400);
-}
-
-/* HIGHLIGHT */
-.highlight{
-  background:linear-gradient(135deg,var(--blue-50),#EFF6FF);
-  border:1px solid var(--blue-200);border-radius:13px;
-  padding:1.15rem 1.35rem;margin-bottom:13px;
-  transition:box-shadow .3s ease;
-}
-.highlight:hover{box-shadow:0 8px 24px rgba(37,99,235,0.08);}
-.highlight h3{
-  font-family:'Sora',sans-serif;font-weight:700;font-size:0.92rem;
-  color:var(--blue-800);margin-bottom:0.4rem;
-}
-.highlight p{font-size:0.79rem;color:var(--slate-600);line-height:1.65;}
-
-/* PHASE TIMELINE */
-.phase-timeline{display:flex;flex-direction:column;gap:0;}
-.phase-item{
-  display:flex;align-items:stretch;gap:0;
-  position:relative;
-}
-.phase-left{
-  display:flex;flex-direction:column;align-items:center;
-  width:44px;flex-shrink:0;
-}
-.phase-dot{
-  width:32px;height:32px;border-radius:50%;
-  background:var(--blue-600);color:#fff;
-  display:flex;align-items:center;justify-content:center;
-  font-family:'Sora',sans-serif;font-weight:700;font-size:0.75rem;
-  flex-shrink:0;margin-top:14px;z-index:1;
-  transition:transform .25s ease,box-shadow .25s ease;
-}
-.phase-item:hover .phase-dot{transform:scale(1.15);box-shadow:0 0 0 6px var(--blue-100);}
-.phase-line{width:2px;background:var(--blue-200);flex:1;margin:0 auto;}
-.phase-item:last-child .phase-line{display:none;}
-.phase-body{
-  background:#fff;border-radius:12px;border:1px solid var(--blue-100);
-  padding:1rem 1.2rem;margin:10px 0 10px 10px;flex:1;
-  transition:border-color .2s,box-shadow .2s,transform .2s;
-}
-.phase-body:hover{border-color:var(--blue-300);box-shadow:0 4px 16px rgba(37,99,235,0.08);transform:translateX(3px);}
-.phase-body h4{
-  font-family:'Sora',sans-serif;font-weight:700;font-size:0.88rem;
-  color:var(--blue-800);margin-bottom:0.35rem;
-}
-.phase-body p{font-size:0.78rem;color:var(--slate-600);line-height:1.55;margin-bottom:0.45rem;}
-
-/* TRIPLE GRID */
-.triple-constraint{
-  display:grid;grid-template-columns:repeat(3,1fr);gap:1px;
-  background:var(--blue-100);border-radius:12px;overflow:hidden;
-  border:1px solid var(--blue-100);margin-bottom:13px;
-}
-.tc-cell{
-  background:#fff;padding:1rem 1.2rem;text-align:center;
-  transition:background .2s ease;
-}
-.tc-cell:hover{background:var(--blue-50);}
-.tc-cell:first-child{border-radius:12px 0 0 12px;}
-.tc-cell:last-child{border-radius:0 12px 12px 0;}
-.tc-label{
-  font-size:0.63rem;font-weight:700;letter-spacing:0.09em;text-transform:uppercase;
-  color:var(--blue-400);margin-bottom:4px;
-}
-.tc-value{
-  font-family:'Sora',sans-serif;font-weight:700;font-size:1rem;color:var(--blue-900);
-}
-.tc-desc{font-size:0.73rem;color:var(--slate-600);margin-top:4px;line-height:1.4;}
-
-/* CERT CARDS */
-.cert-card{
-  background:#fff;border-radius:13px;border:1px solid var(--blue-100);
-  padding:1rem 1.2rem;display:flex;flex-direction:column;gap:6px;
-  transition:transform .2s,box-shadow .2s,border-color .2s;
-}
-.cert-card:hover{transform:translateY(-3px);box-shadow:0 8px 24px rgba(37,99,235,0.09);border-color:var(--blue-200);}
-.cert-header{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;}
-.cert-name{
-  font-family:'Sora',sans-serif;font-weight:700;font-size:0.8rem;
-  color:var(--blue-800);line-height:1.3;
-}
-.cert-badge{
-  font-size:0.63rem;font-weight:700;letter-spacing:0.04em;
-  padding:3px 8px;border-radius:100px;white-space:nowrap;flex-shrink:0;
-}
-.cert-badge.green{background:#DCFCE7;color:#166534;}
-.cert-badge.amber{background:#FEF9C3;color:#92400E;}
-.cert-badge.blue{background:var(--blue-100);color:var(--blue-700);}
-.cert-body{font-size:0.76rem;color:var(--slate-600);line-height:1.55;}
-.cert-salary{font-size:0.8rem;font-weight:600;color:var(--blue-600);margin-top:2px;}
-
-/* AGILE GRID */
-.agile-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:13px;}
-.agile-card{
-  background:#fff;border-radius:13px;border:1px solid var(--blue-100);
-  padding:1.05rem 1.15rem;transition:transform .2s,box-shadow .2s;
-}
-.agile-card:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(37,99,235,0.08);}
-.agile-icon{
-  width:34px;height:34px;border-radius:8px;
-  background:linear-gradient(135deg,var(--blue-500),var(--blue-700));
-  display:flex;align-items:center;justify-content:center;margin-bottom:0.65rem;
-  transition:transform .3s ease;
-}
-.agile-card:hover .agile-icon{transform:rotate(-8deg) scale(1.08);}
-.agile-icon svg{width:15px;height:15px;color:#fff;}
-.agile-card h3{
-  font-family:'Sora',sans-serif;font-weight:700;font-size:0.88rem;
-  color:var(--blue-900);margin-bottom:4px;
-}
-.agile-card p{font-size:0.77rem;color:var(--slate-600);line-height:1.55;}
-.agile-pill-row{display:flex;flex-wrap:wrap;gap:5px;margin-top:8px;}
-.pill{
-  font-size:0.65rem;font-weight:600;letter-spacing:0.03em;
-  padding:3px 8px;border-radius:100px;
-  background:var(--blue-50);color:var(--blue-600);border:1px solid var(--blue-100);
-  transition:background .2s,color .2s;
-}
-.pill:hover{background:var(--blue-600);color:#fff;}
-
-/* NORM ROWS */
-.norm-row{
-  background:#fff;border-radius:11px;border:1px solid var(--blue-100);
-  padding:0.9rem 1.2rem;margin-bottom:9px;
-  display:flex;align-items:flex-start;gap:13px;
-  transition:border-color .2s,transform .2s;
-}
-.norm-row:hover{border-color:var(--blue-300);transform:translateX(3px);}
-.norm-num{
-  font-family:'Sora',sans-serif;font-weight:700;font-size:0.75rem;
-  color:var(--blue-600);background:var(--blue-50);
-  border:1px solid var(--blue-200);border-radius:7px;
-  padding:5px 10px;white-space:nowrap;flex-shrink:0;
-}
-.norm-body h4{font-size:0.86rem;font-weight:600;color:var(--blue-900);margin-bottom:3px;}
-.norm-body p{font-size:0.77rem;color:var(--slate-600);line-height:1.55;}
-
-/* DC FEATURES */
-.dc-grid{display:grid;grid-template-columns:1fr 1fr;gap:13px;}
-.dc-feature{
-  background:#fff;border-radius:13px;border:1px solid var(--blue-100);
-  padding:1rem 1.2rem;display:flex;gap:11px;
-  transition:transform .2s,box-shadow .2s;
-}
-.dc-feature:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(37,99,235,0.08);}
-.dc-feature-icon{
-  width:36px;height:36px;flex-shrink:0;border-radius:8px;
-  background:var(--blue-50);border:1px solid var(--blue-100);
-  display:flex;align-items:center;justify-content:center;
-}
-.dc-feature-icon svg{width:17px;height:17px;color:var(--blue-500);}
-.dc-feature h4{font-size:0.84rem;font-weight:600;color:var(--blue-900);margin-bottom:3px;}
-.dc-feature p{font-size:0.76rem;color:var(--slate-600);line-height:1.55;}
-
-/* TABLES */
-.data-table{
-  width:100%;border-collapse:collapse;background:#fff;
-  border-radius:12px;overflow:hidden;border:1px solid var(--blue-100);
-  margin-top:13px;font-size:0.78rem;
-}
-.data-table th{
-  background:var(--blue-700);color:#fff;
-  padding:10px 13px;text-align:left;font-weight:600;font-size:0.75rem;
-}
-.data-table td{padding:8px 13px;border-bottom:1px solid var(--blue-50);color:var(--slate-600);}
-.data-table tr:last-child td{border-bottom:none;}
-.data-table tr:hover td{background:var(--blue-50);}
-.tier-pill{font-size:0.66rem;font-weight:700;padding:2px 8px;border-radius:100px;}
-.t-gold{background:#FEF3C7;color:#92400E;}
-.t-silver{background:#F1F5F9;color:#475569;}
-.t-plat{background:#EDE9FE;color:#5B21B6;}
-.t-diamond{background:#ECFDF5;color:#065F46;}
-.t-amber{background:#FFF7ED;color:#C2410C;}
-
-/* DIRECTOR GRID */
-.dir-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:13px;}
-.dir-card{
-  background:#fff;border-radius:11px;border:1px solid var(--blue-100);
-  padding:0.9rem 1rem;text-align:center;
-  transition:transform .2s,border-color .2s;
-}
-.dir-card:hover{transform:translateY(-2px);border-color:var(--blue-300);}
-.dir-card-icon{
-  width:36px;height:36px;border-radius:8px;
-  background:var(--blue-100);margin:0 auto 0.5rem;
-  display:flex;align-items:center;justify-content:center;
-}
-.dir-card-icon svg{width:16px;height:16px;color:var(--blue-600);}
-.dir-card h4{font-size:0.8rem;font-weight:700;color:var(--blue-800);margin-bottom:3px;}
-.dir-card p{font-size:0.72rem;color:var(--slate-600);line-height:1.45;}
-
-/* LEY ROWS */
-.ley-list{display:flex;flex-direction:column;gap:8px;margin-bottom:13px;}
-.ley-item{
-  background:#fff;border-radius:10px;border:1px solid var(--blue-100);
-  padding:0.8rem 1.1rem;display:flex;align-items:center;gap:12px;
-  transition:transform .2s;
-}
-.ley-item:hover{transform:translateX(3px);}
-.ley-num{
-  font-family:'Sora',sans-serif;font-weight:700;font-size:0.7rem;
-  color:#fff;background:var(--blue-600);
-  width:26px;height:26px;border-radius:50%;
-  display:flex;align-items:center;justify-content:center;flex-shrink:0;
-}
-.ley-text h5{font-size:0.83rem;font-weight:600;color:var(--blue-900);}
-.ley-text p{font-size:0.74rem;color:var(--slate-600);margin-top:1px;line-height:1.4;}
-
-/* PMBOK principle chips */
-.principle-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:13px;}
-.principle-chip{
-  background:#fff;border:1px solid var(--blue-100);border-radius:11px;
-  padding:0.75rem 0.85rem;text-align:center;
-  transition:transform .2s,border-color .2s,box-shadow .2s;
-}
-.principle-chip:hover{transform:translateY(-3px);border-color:var(--blue-300);box-shadow:0 8px 20px rgba(37,99,235,.1);}
-.principle-num{
-  font-family:'JetBrains Mono',monospace;font-size:0.62rem;font-weight:600;
-  color:var(--cyan-600);letter-spacing:0.05em;
-}
-.principle-chip h5{font-size:0.75rem;font-weight:700;color:var(--blue-900);margin:3px 0 2px;}
-.principle-chip p{font-size:0.68rem;color:var(--slate-600);line-height:1.4;}
-
-/* Knowledge area bars */
-.ka-list{display:flex;flex-direction:column;gap:7px;margin-bottom:13px;}
-.ka-row{
-  display:flex;align-items:center;gap:12px;background:#fff;
-  border:1px solid var(--blue-100);border-radius:10px;padding:0.6rem 0.9rem;
-  transition:border-color .2s;
-}
-.ka-row:hover{border-color:var(--blue-300);}
-.ka-index{
-  font-family:'Sora',sans-serif;font-weight:700;font-size:0.7rem;color:#fff;
-  background:var(--blue-500);width:22px;height:22px;border-radius:6px;
-  display:flex;align-items:center;justify-content:center;flex-shrink:0;
-}
-.ka-name{font-size:0.8rem;font-weight:600;color:var(--blue-900);min-width:150px;flex-shrink:0;}
-.ka-desc{font-size:0.74rem;color:var(--slate-600);line-height:1.4;}
-
-/* Domain rings */
-.domain-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:13px;}
-.domain-card{
-  background:linear-gradient(160deg,#fff,var(--blue-50));
-  border:1px solid var(--blue-100);border-radius:12px;padding:0.9rem 1rem;
-  transition:transform .2s,box-shadow .2s;
-}
-.domain-card:hover{transform:translateY(-3px) rotate(-0.5deg);box-shadow:0 10px 26px rgba(37,99,235,.1);}
-.domain-card h5{font-size:0.78rem;font-weight:700;color:var(--blue-800);margin-bottom:3px;}
-.domain-card p{font-size:0.7rem;color:var(--slate-600);line-height:1.4;}
-
-/* Canvas building blocks */
-.canvas-wrap{
-  display:grid;grid-template-columns:1fr 1fr;gap:20px;align-items:start;margin-bottom:13px;
-}
-.canvas-image-frame{
-  background:#fff;border:1px solid var(--blue-100);border-radius:16px;
-  padding:14px;box-shadow:0 10px 30px rgba(37,99,235,.08);
-  transition:transform .3s ease,box-shadow .3s ease;
-}
-.canvas-image-frame:hover{transform:scale(1.015);box-shadow:0 16px 40px rgba(37,99,235,.14);}
-.canvas-image-frame img{
-  width:100%;display:block;border-radius:10px;
-}
-.canvas-caption{
-  display:flex;align-items:center;justify-content:space-between;
-  margin-top:10px;padding-top:10px;border-top:1px dashed var(--blue-200);
-}
-.canvas-caption span{font-size:0.7rem;color:var(--slate-600);}
-.canvas-caption strong{font-family:'Sora',sans-serif;font-size:0.78rem;color:var(--blue-800);}
-.canvas-blocks{display:flex;flex-direction:column;gap:7px;}
-.canvas-block{
-  display:flex;gap:10px;align-items:flex-start;background:#fff;
-  border:1px solid var(--blue-100);border-radius:9px;padding:0.55rem 0.8rem;
-  transition:border-color .2s,transform .2s;
-}
-.canvas-block:hover{border-color:var(--blue-300);transform:translateX(3px);}
-.canvas-block-num{
-  font-family:'Sora',sans-serif;font-weight:700;font-size:0.68rem;color:#fff;
-  background:var(--cyan-600);width:20px;height:20px;border-radius:50%;
-  display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;
-}
-.canvas-block h5{font-size:0.76rem;font-weight:700;color:var(--blue-900);margin-bottom:1px;}
-.canvas-block p{font-size:0.7rem;color:var(--slate-600);line-height:1.4;}
-
-/* complementary concept cards */
-.complement-card{
-  background:#fff;border:1px solid var(--blue-100);border-radius:13px;
-  padding:1.05rem 1.2rem;transition:transform .2s,box-shadow .2s;
-}
-.complement-card:hover{transform:translateY(-3px);box-shadow:0 10px 26px rgba(37,99,235,.09);}
-.complement-eyebrow{
-  font-size:0.63rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;
-  color:var(--cyan-600);margin-bottom:0.4rem;display:block;
-}
-
-/* back to top */
-.to-top{
-  position:fixed;bottom:22px;right:22px;width:42px;height:42px;border-radius:50%;
-  background:var(--blue-700);color:#fff;border:none;cursor:pointer;
-  display:flex;align-items:center;justify-content:center;
-  box-shadow:0 8px 20px rgba(29,78,216,.35);
-  opacity:0;pointer-events:none;transform:translateY(12px);
-  transition:opacity .25s ease,transform .25s ease,background .2s ease;
-  z-index:200;
-}
-.to-top.visible{opacity:1;pointer-events:auto;transform:translateY(0);}
-.to-top:hover{background:var(--blue-600);}
-.to-top svg{width:18px;height:18px;}
-
-/* FOOTER */
-footer{
-  background:var(--blue-900);color:var(--blue-200);
-  text-align:center;padding:2rem;font-size:0.75rem;position:relative;z-index:1;
-}
-footer p+p{margin-top:6px;opacity:0.55;}
-
-@media(max-width:720px){
-  .grid-3,.grid-4,.agile-grid,.dir-grid,.principle-grid,.domain-grid{grid-template-columns:1fr;}
-  .grid-2,.dc-grid,.triple-constraint,.canvas-wrap{grid-template-columns:1fr;}
-  .nav-links{display:none;}
-}
-
-/* ============ MENÚ PRINCIPAL DE PARCIALES ============ */
-.nav-home-btn{
-  display:flex;align-items:center;gap:6px;
-  background:var(--blue-50);color:var(--blue-700);border:1px solid var(--blue-100);
-  font-size:0.72rem;font-weight:600;padding:6px 12px;border-radius:8px;
-  cursor:pointer;transition:background .2s,color .2s;
-}
-.nav-home-btn:hover{background:var(--blue-600);color:#fff;}
-.nav-home-btn svg{width:13px;height:13px;}
-.nav-parcial-label{
-  font-size:0.72rem;font-weight:700;color:var(--blue-700);
-  background:var(--blue-100);padding:5px 12px;border-radius:100px;
-  letter-spacing:0.03em;
-}
-
-.app-view{display:none;}
-.app-view.active{display:block;}
-
-.menu-wrap{max-width:1100px;margin:0 auto;padding:0 2rem 4rem;position:relative;z-index:1;}
-.menu-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:1rem;}
-.menu-card{
-  background:#fff;border:1px solid var(--blue-100);border-radius:18px;
-  padding:1.6rem 1.4rem;text-align:left;cursor:pointer;position:relative;overflow:hidden;
-  transition:transform .25s cubic-bezier(.22,1,.36,1),box-shadow .25s ease,border-color .25s ease;
-  display:flex;flex-direction:column;gap:10px;min-height:210px;
-}
-.menu-card::before{
-  content:'';position:absolute;top:0;left:0;right:0;height:4px;
-  background:linear-gradient(90deg,var(--blue-400),var(--cyan-500));
-  transform:scaleX(0);transform-origin:left;transition:transform .3s ease;
-}
-.menu-card:hover{transform:translateY(-6px);box-shadow:0 18px 40px rgba(37,99,235,0.14);border-color:var(--blue-300);}
-.menu-card:hover::before{transform:scaleX(1);}
-.menu-card.locked{cursor:default;opacity:0.72;}
-.menu-card.locked:hover{transform:none;box-shadow:none;border-color:var(--blue-100);}
-.menu-card.locked::before{display:none;}
-.menu-card-top{display:flex;align-items:center;justify-content:space-between;}
-.menu-card-num{
-  font-family:'Sora',sans-serif;font-weight:800;font-size:1.6rem;color:var(--blue-200);
-  letter-spacing:-0.03em;
-}
-.menu-card-status{
-  font-size:0.62rem;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;
-  padding:3px 10px;border-radius:100px;white-space:nowrap;
-}
-.menu-card-status.done{background:#DCFCE7;color:#166534;}
-.menu-card-status.current{background:var(--blue-100);color:var(--blue-700);}
-.menu-card-status.soon{background:var(--slate-100);color:var(--slate-600);}
-.menu-card h3{
-  font-family:'Sora',sans-serif;font-weight:700;font-size:1.05rem;color:var(--blue-900);
-  letter-spacing:-0.01em;
-}
-.menu-card p{font-size:0.8rem;color:var(--slate-600);line-height:1.55;flex:1;}
-.menu-card-topics{list-style:none;margin-top:2px;}
-.menu-card-topics li{
-  font-size:0.72rem;color:var(--slate-600);padding:2px 0 2px 14px;position:relative;line-height:1.5;
-}
-.menu-card-topics li::before{
-  content:'';position:absolute;left:0;top:9px;width:4px;height:4px;border-radius:50%;background:var(--blue-400);
-}
-.menu-card-cta{
-  font-size:0.75rem;font-weight:700;color:var(--blue-600);display:flex;align-items:center;gap:5px;
-  margin-top:4px;
-}
-.menu-card-cta svg{width:13px;height:13px;transition:transform .2s;}
-.menu-card:hover .menu-card-cta svg{transform:translateX(3px);}
-
-.back-row{
-  display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;
-  padding:1.5rem 0 0.4rem;
-}
-.back-btn{
-  display:inline-flex;align-items:center;gap:6px;background:#fff;border:1px solid var(--blue-100);
-  color:var(--blue-700);font-size:0.78rem;font-weight:600;padding:7px 14px;border-radius:9px;
-  cursor:pointer;transition:background .2s,transform .2s;
-}
-.back-btn:hover{background:var(--blue-50);transform:translateX(-2px);}
-.back-btn svg{width:14px;height:14px;}
-
-.subnav{display:flex;gap:4px;flex-wrap:wrap;}
-.subnav a{
-  font-size:0.7rem;font-weight:500;color:var(--slate-600);text-decoration:none;
-  padding:5px 9px;border-radius:6px;transition:all .2s;background:#fff;border:1px solid var(--blue-100);
-}
-.subnav a:hover{background:var(--blue-50);color:var(--blue-700);}
-.subnav a.active{background:var(--blue-100);color:var(--blue-700);border-color:var(--blue-200);}
-
-.soon-panel{
-  background:linear-gradient(135deg,var(--blue-50),#EFF6FF);border:1px dashed var(--blue-300);
-  border-radius:18px;padding:3rem 2rem;text-align:center;max-width:640px;margin:2rem auto 0;
-}
-.soon-panel .soon-icon{
-  width:56px;height:56px;border-radius:14px;background:#fff;border:1px solid var(--blue-200);
-  display:flex;align-items:center;justify-content:center;margin:0 auto 1rem;
-}
-.soon-panel .soon-icon svg{width:26px;height:26px;color:var(--blue-500);}
-.soon-panel h3{font-family:'Sora',sans-serif;font-weight:700;font-size:1.1rem;color:var(--blue-900);margin-bottom:0.6rem;}
-.soon-panel p{font-size:0.85rem;color:var(--slate-600);line-height:1.7;}
-
-@media(max-width:720px){
-  .menu-grid{grid-template-columns:1fr;}
-  .subnav{display:none;}
-}
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>THE WEEKND — XO</title>
+  <link rel="icon" type="image/png" href="favicon.png" />
+  <link rel="stylesheet" href="style.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Oswald:wght@200;400;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet" />
 </head>
 <body>
 
-<div class="bg-blob b1"></div>
-<div class="bg-blob b2"></div>
-<div class="bg-blob b3"></div>
-<div class="scroll-progress" id="scrollProgress"></div>
+  <!-- ░░░ HERO ░░░ -->
+  <section class="hero">
+    <div class="hero__noise"></div>
+    <div class="hero__vignette"></div>
+    <div class="hero__content">
+      <p class="hero__eyebrow">XO &mdash; SINCE 2009</p>
+      <h1 class="hero__title" data-text="THE WEEKND">THE WEEKND</h1>
+      <p class="hero__subtitle">Trilogy &nbsp;·&nbsp; Kiss Land &nbsp;·&nbsp; BBTM &nbsp;·&nbsp; Starboy &nbsp;·&nbsp; MDM &nbsp;·&nbsp; After Hours &nbsp;·&nbsp; Dawn FM &nbsp;·&nbsp; HUT</p>
+      <a href="#disco" class="hero__cta">Escuchar el universo</a>
+    </div>
+    <div class="hero__scroll-hint">
+      <span></span><span></span><span></span>
+      SCROLL
+    </div>
+  </section>
 
-<nav>
-  <div class="nav-inner">
-    <div class="nav-logo" style="cursor:pointer;" onclick="setView('home')">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/>
-      </svg>
-      Metodología · Desarrollo de Proyectos TI
-    </div>
-    <div class="nav-links" id="navLinks">
-      <!-- p1 -->
-      <a href="#gestion" data-parcial="p1">Gestión TI</a>
-      <a href="#tipos" data-parcial="p1">Tipos de Proyectos</a>
-      <a href="#certs" data-parcial="p1">Certificaciones</a>
-      <a href="#agile" data-parcial="p1">Metodologías Ágiles</a>
-      <a href="#normas" data-parcial="p1">Normas y Estándares</a>
-      <a href="#dc" data-parcial="p1">Centros de Datos</a>
-      <!-- p2 -->
-      <a href="#pmbok" data-parcial="p2">PMBOK</a>
-      <a href="#canvas" data-parcial="p2">Modelo Canvas</a>
-      <a href="#complementos" data-parcial="p2">Complementos</a>
-    </div>
-    <button class="nav-home-btn" id="navHomeBtn" onclick="setView('home')" style="display:none;">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
-      Menú de parciales
-    </button>
-  </div>
-</nav>
-
-<!-- ============ HOME: MENÚ DE 3 PARCIALES ============ -->
-<div class="app-view active" id="view-home">
-  <div class="hero">
-    <div class="hero-badge">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="11" height="11"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
-      Ingeniería en Desarrollo de Software
-    </div>
-    <h1>Metodología para el <span>Desarrollo de Proyectos TI</span></h1>
-    <p>Marco de referencia técnico y normativo para la gestión profesional de proyectos de tecnologías de la información: desde su iniciación hasta el cierre, abarcando estándares internacionales, marcos regulatorios y herramientas de control.</p>
-    <div class="hero-meta">
-      <span>
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
-        3 parciales · 9 módulos temáticos
-      </span>
-      <span>
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-        Fuentes verificadas
-      </span>
-      <span>
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-        Normas ISO · IEEE · PMI · CMMI
-      </span>
+  <!-- ░░░ TICKER ░░░ -->
+  <div class="ticker" aria-hidden="true">
+    <div class="ticker__track">
+      <span>BLINDING LIGHTS</span><span>●</span>
+      <span>THE HILLS</span><span>●</span>
+      <span>CAN'T FEEL MY FACE</span><span>●</span>
+      <span>STARBOY</span><span>●</span>
+      <span>CALL OUT MY NAME</span><span>●</span>
+      <span>SAVE YOUR TEARS</span><span>●</span>
+      <span>SACRIFICE</span><span>●</span>
+      <span>TIMELESS</span><span>●</span>
+      <span>EARNED IT</span><span>●</span>
+      <span>WICKED GAMES</span><span>●</span>
+      <span>PROFESSIONAL</span><span>●</span>
+      <span>IS THERE SOMEONE ELSE?</span><span>●</span>
+      <span>DIE FOR YOU</span><span>●</span>
+      <span>BLINDING LIGHTS</span><span>●</span>
+      <span>THE HILLS</span><span>●</span>
+      <span>CAN'T FEEL MY FACE</span><span>●</span>
+      <span>STARBOY</span><span>●</span>
+      <span>CALL OUT MY NAME</span><span>●</span>
+      <span>SAVE YOUR TEARS</span><span>●</span>
+      <span>SACRIFICE</span><span>●</span>
+      <span>TIMELESS</span><span>●</span>
+      <span>EARNED IT</span><span>●</span>
+      <span>WICKED GAMES</span><span>●</span>
+      <span>PROFESSIONAL</span><span>●</span>
+      <span>IS THERE SOMEONE ELSE?</span><span>●</span>
+      <span>DIE FOR YOU</span><span>●</span>
     </div>
   </div>
 
-  <div class="menu-wrap">
-    <div class="section-header reveal" style="padding-top:0.5rem;">
-      <div class="section-header-text">
-        <h2 style="font-size:1.15rem;">Selecciona un parcial</h2>
-      </div>
+  <!-- ░░░ STATEMENT ░░░ -->
+  <section class="statement">
+    <div class="statement__inner">
+      <div class="statement__line"></div>
+      <blockquote class="statement__quote">
+        "I've made a lot of mistakes and have had to pay for them."
+      </blockquote>
+      <p class="statement__attr">— Abel Makkonen Tesfaye</p>
+      <div class="statement__line"></div>
     </div>
-    <div class="menu-grid reveal">
+  </section>
 
-      <div class="menu-card" onclick="setView('p1')">
-        <div class="menu-card-top">
-          <span class="menu-card-num">01</span>
-          <span class="menu-card-status done">Publicado</span>
+  <!-- ░░░ DISCOGRAFÍA COMPLETA ░░░ -->
+  <section class="disco" id="disco">
+
+    <div class="disco__header">
+      <p class="disco__eyebrow">Discografía Completa</p>
+      <h2 class="disco__title">TODOS LOS<br>ÁLBUMES</h2>
+    </div>
+
+    <!-- ── 1: TRILOGY ── -->
+    <article class="era era--odd" id="trilogy">
+      <div class="era__image-wrap">
+        <img src="dewiken5.jpg" alt="The Weeknd — Trilogy" loading="lazy" />
+        <div class="era__img-overlay">
+          <span class="era__img-label">Trilogy</span>
         </div>
-        <h3>Primer Parcial</h3>
-        <p>Fundamentos de gestión, tipos de proyectos, certificaciones, metodologías ágiles, normas/estándares y centros de datos.</p>
-        <ul class="menu-card-topics">
-          <li>Imágenes ISO para las prácticas</li>
-          <li>Centro de Datos, qué son y cómo funcionan</li>
-          <li>Normas y estándares de TI</li>
-          <li>Metodologías ágiles más utilizadas</li>
-          <li>Certificaciones IT mejor cotizadas</li>
-          <li>Tipos de proyectos y marco regulatorio</li>
-        </ul>
-        <span class="menu-card-cta">Ver contenido
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
-        </span>
       </div>
-
-      <div class="menu-card" onclick="setView('p2')">
-        <div class="menu-card-top">
-          <span class="menu-card-num">02</span>
-          <span class="menu-card-status current">En curso</span>
+      <div class="era__content">
+        <div class="era__meta">
+          <span class="era__number">I</span>
+          <span class="era__divider"></span>
+          <span class="era__year">2011 – 2012</span>
+          <span class="era__type">Compilación</span>
         </div>
-        <h3>Segundo Parcial</h3>
-        <p>Guía del PMBOK, Modelo Canvas, metodología de la investigación y cómo obtener un trabajo como Arquitecto de Nube.</p>
-        <ul class="menu-card-topics">
-          <li>Guía del PMBOK y Metodología CANVAS</li>
-          <li>Cómo obtener un trabajo como Arquitecto de Nube</li>
-          <li>Metodología de la Investigación</li>
-          <li>Metodologías para el Desarrollo de Software</li>
+        <h3 class="era__name">Trilogy</h3>
+        <p class="era__tagline">Donde todo comenzó. Las mixtapes que sacudieron el R&amp;B.</p>
+        <p class="era__desc">
+          Tres mixtapes gratuitas — <em>House of Balloons</em>, <em>Thursday</em> y <em>Echoes of Silence</em> —
+          lanzadas desde el anonimato en Toronto. Abel Tesfaye creó un R&amp;B oscuro,
+          cinematográfico y perturbador que nadie había escuchado antes. La compilación oficial
+          llegó en 2012 con Republic Records.
+        </p>
+        <ul class="era__tracks">
+          <li><span class="era__track-num">—</span>High For This</li>
+          <li><span class="era__track-num">—</span>The Morning</li>
+          <li><span class="era__track-num">—</span>Wicked Games</li>
+          <li><span class="era__track-num">—</span>Twenty Eight</li>
         </ul>
-        <span class="menu-card-cta">Ver contenido
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
-        </span>
-      </div>
-
-      <div class="menu-card locked" onclick="setView('p3')">
-        <div class="menu-card-top">
-          <span class="menu-card-num">03</span>
-          <span class="menu-card-status soon">Próximamente</span>
+        <div class="era__player">
+          <iframe src="https://open.spotify.com/embed/album/5EbpxRwbbpCJUepbqVTZ1U?utm_source=generator&theme=0"
+            width="100%" height="352" frameborder="0"
+            allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+            loading="lazy" style="border-radius:12px"></iframe>
         </div>
-        <h3>Tercer Parcial</h3>
-        <p>Este espacio se habilitará cuando Classroom publique los temas del tercer parcial.</p>
-        <ul class="menu-card-topics">
-          <li>Contenido pendiente de publicación</li>
-        </ul>
-        <span class="menu-card-cta" style="color:var(--slate-600);">Ver estado
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
-        </span>
       </div>
+    </article>
 
+    <!-- ── 2: KISS LAND ── -->
+    <article class="era era--even" id="kiss-land">
+      <div class="era__image-wrap">
+        <img src="dewiken6.jpg" alt="The Weeknd — Kiss Land" loading="lazy" />
+        <div class="era__img-overlay">
+          <span class="era__img-label">Kiss Land</span>
+        </div>
+      </div>
+      <div class="era__content">
+        <div class="era__meta">
+          <span class="era__number">II</span>
+          <span class="era__divider"></span>
+          <span class="era__year">2013</span>
+          <span class="era__type">Álbum I</span>
+        </div>
+        <h3 class="era__name">Kiss Land</h3>
+        <p class="era__tagline">Un lugar aterrador que nunca ha visitado. Horror cinematográfico.</p>
+        <p class="era__desc">
+          El debut oficial como álbum de estudio es una pesadilla de dark wave y R&amp;B alternativo.
+          Inspirado en Cronenberg, Ridley Scott y John Carpenter, Kiss Land narra la vida en gira
+          como un viaje surreal al infierno. Drake aparece en "Live For". Producido sin casi
+          nada de colaboradores externos, es el disco más personal y extraño de su carrera.
+        </p>
+        <ul class="era__tracks">
+          <li><span class="era__track-num">01</span>Professional</li>
+          <li><span class="era__track-num">05</span>Belong To The World</li>
+          <li><span class="era__track-num">06</span>Live For ft. Drake</li>
+          <li><span class="era__track-num">08</span>Kiss Land</li>
+        </ul>
+        <div class="era__player">
+          <iframe src="https://open.spotify.com/embed/album/3hhDpPtCFuQbppwYgsVhMO?utm_source=generator&theme=0"
+            width="100%" height="352" frameborder="0"
+            allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+            loading="lazy" style="border-radius:12px"></iframe>
+        </div>
+      </div>
+    </article>
+
+    <!-- ── 3: BEAUTY BEHIND THE MADNESS ── -->
+    <article class="era era--odd" id="bbtm">
+      <div class="era__image-wrap">
+        <img src="dewiken7.jpg" alt="The Weeknd — Beauty Behind the Madness" loading="lazy" />
+        <div class="era__img-overlay">
+          <span class="era__img-label">BBTM</span>
+        </div>
+      </div>
+      <div class="era__content">
+        <div class="era__meta">
+          <span class="era__number">III</span>
+          <span class="era__divider"></span>
+          <span class="era__year">2015</span>
+          <span class="era__type">Álbum II</span>
+        </div>
+        <h3 class="era__name">Beauty Behind<br>The Madness</h3>
+        <p class="era__tagline">El crossover al mainstream sin perder el alma oscura.</p>
+        <p class="era__desc">
+          El álbum que lo convirtió en superestrella global. Con producción de Kanye West,
+          Max Martin y Labrinth, equilibró su estética sombría con pop accesible. "The Hills" y
+          "Can't Feel My Face" dominaron las listas mundiales. Lana Del Rey y Ed Sheeran
+          aparecen en las profundidades del tracklist. Ganó 2 Grammys.
+        </p>
+        <ul class="era__tracks">
+          <li><span class="era__track-num">05</span>The Hills</li>
+          <li><span class="era__track-num">07</span>Can't Feel My Face</li>
+          <li><span class="era__track-num">09</span>Earned It</li>
+          <li><span class="era__track-num">13</span>Prisoner ft. Lana Del Rey</li>
+        </ul>
+        <div class="era__player">
+          <iframe src="https://open.spotify.com/embed/album/7q6thErM1TVz3wu46kynOe?utm_source=generator&theme=0"
+            width="100%" height="352" frameborder="0"
+            allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+            loading="lazy" style="border-radius:12px"></iframe>
+        </div>
+      </div>
+    </article>
+
+    <!-- ── 4: STARBOY ── -->
+    <article class="era era--even" id="starboy">
+      <div class="era__image-wrap">
+        <img src="dewiken2.jpg" alt="The Weeknd — Starboy" loading="lazy" />
+        <div class="era__img-overlay">
+          <span class="era__img-label">Starboy</span>
+        </div>
+      </div>
+      <div class="era__content">
+        <div class="era__meta">
+          <span class="era__number">IV</span>
+          <span class="era__divider"></span>
+          <span class="era__year">2016</span>
+          <span class="era__type">Álbum III</span>
+        </div>
+        <h3 class="era__name">Starboy</h3>
+        <p class="era__tagline">La cruz, el desierto, la fama que destruye al hombre.</p>
+        <p class="era__desc">
+          Con Daft Punk como colaboradores estelares, Starboy exploró la idolatría y el vacío
+          de la celebridad. Kendrick Lamar, Lana Del Rey, Future y otros aparecen en un álbum
+          que mezcló pop oscuro, trap y dance. "Starboy" y "I Feel It Coming" rompieron récords.
+          La era del nuevo Abel: peinado cortado, sonido renovado.
+        </p>
+        <ul class="era__tracks">
+          <li><span class="era__track-num">01</span>Starboy ft. Daft Punk</li>
+          <li><span class="era__track-num">09</span>I Feel It Coming</li>
+          <li><span class="era__track-num">10</span>Sidewalks ft. Kendrick Lamar</li>
+          <li><span class="era__track-num">18</span>Stargirl Interlude ft. Lana Del Rey</li>
+        </ul>
+        <div class="era__player">
+          <iframe src="https://open.spotify.com/embed/album/09fggMHib4YkOtwQNXEBII?utm_source=generator&theme=0"
+            width="100%" height="352" frameborder="0"
+            allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+            loading="lazy" style="border-radius:12px"></iframe>
+        </div>
+      </div>
+    </article>
+
+    <!-- ── 5: MY DEAR MELANCHOLY ── -->
+    <article class="era era--odd" id="mdm">
+      <div class="era__image-wrap">
+        <img src="dewiken8.jpg" alt="The Weeknd — My Dear Melancholy," loading="lazy" />
+        <div class="era__img-overlay">
+          <span class="era__img-label">MDM</span>
+        </div>
+      </div>
+      <div class="era__content">
+        <div class="era__meta">
+          <span class="era__number">V</span>
+          <span class="era__divider"></span>
+          <span class="era__year">2018</span>
+          <span class="era__type">EP</span>
+        </div>
+        <h3 class="era__name">My Dear<br>Melancholy,</h3>
+        <p class="era__tagline">6 canciones. Una ruptura. El dolor sin filtro.</p>
+        <p class="era__desc">
+          El EP más crudo y personal de su carrera. Tiró a la basura un álbum completo
+          que ya tenía grabado porque ya no se identificaba con él, y creó esto en su lugar.
+          Rumoreado como una respuesta a Bella Hadid y Selena Gomez. Gesaffelstein, Skrillex
+          y Frank Dukes producen un sonido minimalista y devastador. "Call Out My Name" debutó
+          en el top 5 del Hot 100.
+        </p>
+        <ul class="era__tracks">
+          <li><span class="era__track-num">01</span>Call Out My Name</li>
+          <li><span class="era__track-num">02</span>Try Me</li>
+          <li><span class="era__track-num">03</span>Wasted Times</li>
+          <li><span class="era__track-num">06</span>Privilege</li>
+        </ul>
+        <div class="era__player">
+          <iframe src="https://open.spotify.com/embed/album/3N88bRVAwQrtKqSV0UgU69?utm_source=generator&theme=0"
+            width="100%" height="352" frameborder="0"
+            allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+            loading="lazy" style="border-radius:12px"></iframe>
+        </div>
+      </div>
+    </article>
+
+    <!-- ── 6: AFTER HOURS ── -->
+    <article class="era era--even" id="after-hours">
+      <div class="era__image-wrap">
+        <img src="dewiken1.jpg" alt="The Weeknd — After Hours" loading="lazy" />
+        <div class="era__img-overlay">
+          <span class="era__img-label">After Hours</span>
+        </div>
+      </div>
+      <div class="era__content">
+        <div class="era__meta">
+          <span class="era__number">VI</span>
+          <span class="era__divider"></span>
+          <span class="era__year">2020</span>
+          <span class="era__type">Álbum IV</span>
+        </div>
+        <h3 class="era__name">After Hours</h3>
+        <p class="era__tagline">La era del traje rojo. Sangre, neones y oscuridad total.</p>
+        <p class="era__desc">
+          Su obra maestra. Sin features, sin compromisos. Un álbum conceptual de synth-pop,
+          new wave y electropop que narra una noche de autodestrucción en Las Vegas. "Blinding
+          Lights" se convirtió en la canción más escuchada en la historia de Spotify y pasó
+          57 semanas en el Billboard Hot 100. El personaje del traje rojo manchado de sangre
+          es icónico para siempre.
+        </p>
+        <ul class="era__tracks">
+          <li><span class="era__track-num">01</span>Alone Again</li>
+          <li><span class="era__track-num">09</span>Blinding Lights</li>
+          <li><span class="era__track-num">11</span>Save Your Tears</li>
+          <li><span class="era__track-num">13</span>After Hours</li>
+        </ul>
+        <div class="era__player">
+          <iframe src="https://open.spotify.com/embed/album/4yP0hdKOZPNshxUOjY0cZj?utm_source=generator&theme=0"
+            width="100%" height="352" frameborder="0"
+            allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+            loading="lazy" style="border-radius:12px"></iframe>
+        </div>
+      </div>
+    </article>
+
+    <!-- ── 7: DAWN FM ── -->
+    <article class="era era--odd" id="dawn-fm">
+      <div class="era__image-wrap">
+        <img src="dewiken3.jpg" alt="The Weeknd — Dawn FM" loading="lazy" />
+        <div class="era__img-overlay">
+          <span class="era__img-label">Dawn FM</span>
+        </div>
+      </div>
+      <div class="era__content">
+        <div class="era__meta">
+          <span class="era__number">VII</span>
+          <span class="era__divider"></span>
+          <span class="era__year">2022</span>
+          <span class="era__type">Álbum V</span>
+        </div>
+        <h3 class="era__name">Dawn FM</h3>
+        <p class="era__tagline">Radio desde el purgatorio. 103.5 Dawn FM.</p>
+        <p class="era__desc">
+          Con narración de Jim Carrey, Dawn FM es una radio transmitida desde el limbo entre
+          la vida y la muerte. Synth-pop luminoso que esconde oscuridad existencial. Swedish
+          House Mafia, Tyler the Creator y Lil Wayne acompañan este viaje de 51 minutos.
+          Quincy Jones y Josh Safdie también narran. El álbum más conceptual y ambicioso hasta
+          ese momento.
+        </p>
+        <ul class="era__tracks">
+          <li><span class="era__track-num">02</span>Gasoline</li>
+          <li><span class="era__track-num">04</span>Take My Breath</li>
+          <li><span class="era__track-num">09</span>Out of Time</li>
+          <li><span class="era__track-num">10</span>Is There Someone Else?</li>
+        </ul>
+        <div class="era__player">
+          <iframe src="https://open.spotify.com/embed/album/2nLOHgzXzwFEpl62zAgCEC?utm_source=generator&theme=0"
+            width="100%" height="352" frameborder="0"
+            allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+            loading="lazy" style="border-radius:12px"></iframe>
+        </div>
+      </div>
+    </article>
+
+    <!-- ── 8: HURRY UP TOMORROW ── -->
+    <article class="era era--even era--last" id="hurry-up-tomorrow">
+      <div class="era__image-wrap">
+        <img src="dewiken4.jpg" alt="The Weeknd — Hurry Up Tomorrow" loading="lazy" />
+        <div class="era__img-overlay">
+          <span class="era__img-label">HUT</span>
+        </div>
+      </div>
+      <div class="era__content">
+        <div class="era__meta">
+          <span class="era__number">VIII</span>
+          <span class="era__divider"></span>
+          <span class="era__year">2025</span>
+          <span class="era__type">Álbum VI — Final</span>
+        </div>
+        <h3 class="era__name">Hurry Up<br>Tomorrow</h3>
+        <p class="era__tagline">El último capítulo. El fin de The Weeknd.</p>
+        <p class="era__desc">
+          El sexto y último álbum bajo el nombre "The Weeknd". Cierra la trilogía de After
+          Hours y Dawn FM. Abel confronta su propio colapso en escena — perdió la voz en
+          un concierto en SoFi Stadium y canceló la gira —, el trauma y el fin de una era.
+          Playboi Carti, Future, Anitta, Travis Scott y Florence + the Machine acompañan
+          el adiós más grande del R&amp;B moderno.
+        </p>
+        <ul class="era__tracks">
+          <li><span class="era__track-num">—</span>Timeless ft. Playboi Carti</li>
+          <li><span class="era__track-num">—</span>São Paulo ft. Anitta</li>
+          <li><span class="era__track-num">—</span>Cry For Me</li>
+          <li><span class="era__track-num">—</span>Enjoy The Show ft. Future</li>
+        </ul>
+        <div class="era__player">
+          <iframe src="https://open.spotify.com/embed/album/6iyZdOoujtOwiThdAUI8TM?utm_source=generator&theme=0"
+            width="100%" height="352" frameborder="0"
+            allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+            loading="lazy" style="border-radius:12px"></iframe>
+        </div>
+      </div>
+    </article>
+
+  </section>
+
+  <!-- ░░░ STATS ░░░ -->
+  <section class="stats">
+    <div class="stats__inner">
+      <div class="stats__item">
+        <span class="stats__number">100M+</span>
+        <span class="stats__label">Oyentes mensuales en Spotify</span>
+      </div>
+      <div class="stats__divider"></div>
+      <div class="stats__item">
+        <span class="stats__number">4</span>
+        <span class="stats__label">Grammys ganados</span>
+      </div>
+      <div class="stats__divider"></div>
+      <div class="stats__item">
+        <span class="stats__number">8</span>
+        <span class="stats__label">Proyectos en discografía</span>
+      </div>
+      <div class="stats__divider"></div>
+      <div class="stats__item">
+        <span class="stats__number">XO</span>
+        <span class="stats__label">Hugs &amp; Kisses, forever</span>
+      </div>
     </div>
-  </div>
-</div>
+  </section>
 
-<!-- ============ VISTA: PRIMER PARCIAL ============ -->
-<div class="app-view" id="view-p1">
-<div class="main">
-
-<div class="back-row reveal">
-  <button class="back-btn" onclick="setView('home')">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
-    Menú de parciales
-  </button>
-  <div class="subnav">
-    <a href="#gestion">Gestión TI</a>
-    <a href="#tipos">Tipos de Proyectos</a>
-    <a href="#certs">Certificaciones</a>
-    <a href="#agile">Metodologías Ágiles</a>
-    <a href="#normas">Normas y Estándares</a>
-    <a href="#dc">Centros de Datos</a>
-  </div>
-</div>
-
-<!-- ------------------------------------------------------
-     MÓDULO 0: GESTIÓN DE PROYECTOS TI
------------------------------------------------------- -->
-<div id="gestion" class="section-header reveal">
-  <div class="section-icon blue">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-  </div>
-  <div class="section-header-text">
-    <h2>00 · Fundamentos de la Gestión de Proyectos TI</h2>
-    <p>Definición, alcance y componentes estructurales de la administración de proyectos tecnológicos.</p>
-  </div>
-</div>
-<div class="divider"></div>
-
-<div class="grid-2 reveal" style="margin-bottom:13px;">
-  <div class="card">
-    <span class="card-tag">Definición estructural</span>
-    <h3>¿Qué es un Proyecto TI?</h3>
-    <p>Un proyecto es un esfuerzo temporal orientado a crear un producto, servicio o resultado único. Su naturaleza temporal implica inicio y fin definidos, objetivos medibles y desarrollo secuencial por fases. Estadísticamente, un porcentaje significativo de proyectos TI fracasa debido a mala gestión, subestimación de recursos o ausencia de metodología estructurada.</p>
-    <ul class="feature-list">
-      <li>Inicio y fin claramente delimitados en tiempo</li>
-      <li>Entregables únicos y no repetitivos</li>
-      <li>Desarrollo iterativo o secuencial por fases</li>
-      <li>Recursos asignados y presupuesto controlado</li>
-    </ul>
-  </div>
-  <div class="card">
-    <span class="card-tag">Alcance de aplicación</span>
-    <h3>¿Qué es la Gestión de Proyectos TI?</h3>
-    <p>Disciplina que integra planear, organizar, supervisar y controlar proyectos vinculados a tecnologías de la información. Abarca dominios técnicos y organizativos bajo el principio de que no existe una metodología universal: la selección del marco de trabajo depende del tipo, complejidad y contexto del proyecto.</p>
-    <ul class="feature-list">
-      <li>Desarrollo de software a medida o de producto</li>
-      <li>Instalación y configuración de infraestructura</li>
-      <li>Implementación de redes y comunicaciones</li>
-      <li>Migración a computación en la nube</li>
-      <li>Gestión e integración de datos corporativos</li>
-    </ul>
-  </div>
-</div>
-
-<div class="highlight reveal">
-  <h3>Principio fundamental: No existe una metodología perfecta</h3>
-  <p>La selección del marco de trabajo debe responder a variables concretas del proyecto: tamaño del equipo, criticidad del sistema, volatilidad de los requisitos, cultura organizacional y restricciones regulatorias. Un proyecto de infraestructura de red en un banco no se gestiona bajo el mismo marco que una startup desarrollando un MVP. La madurez del equipo y la disponibilidad de recursos también son factores determinantes en esta decisión.</p>
-</div>
-
-<!-- FASES -->
-<div class="section-header reveal" style="padding-top:1.5rem;">
-  <div class="section-header-text">
-    <h2 style="font-size:1rem;">Etapas de la Administración de Proyectos TI</h2>
-    <p>Ciclo de vida estructurado que gobierna el proyecto desde su concepción hasta el cierre formal.</p>
-  </div>
-</div>
-
-<div class="phase-timeline reveal">
-  <div class="phase-item">
-    <div class="phase-left">
-      <div class="phase-dot">01</div>
-      <div class="phase-line"></div>
+  <!-- ░░░ BIG LYRIC ░░░ -->
+  <section class="lyric">
+    <div class="lyric__inner">
+      <p class="lyric__tag">Blinding Lights — After Hours</p>
+      <h2 class="lyric__text">
+        I've been tryna call<br>
+        I've been on my own for long enough<br>
+        <em>Maybe you can show me how to love,<br>maybe</em>
+      </h2>
     </div>
-    <div class="phase-body">
-      <h4>Fase de Iniciación</h4>
-      <p>Establece las bases formales del proyecto. Se define su viabilidad, se identifican los interesados clave y se firma el acta de constitución que autoriza oficialmente el inicio del trabajo.</p>
-      <ul class="feature-list">
-        <li>Formación del equipo y asignación de roles</li>
-        <li>Organización de actividades y estructura de gobierno</li>
-        <li>Definición y documentación de objetivos del proyecto</li>
-        <li>Establecimiento de relación formal con el cliente o patrocinador</li>
-      </ul>
-    </div>
-  </div>
-  <div class="phase-item">
-    <div class="phase-left">
-      <div class="phase-dot">02</div>
-      <div class="phase-line"></div>
-    </div>
-    <div class="phase-body">
-      <h4>Fase de Planificación</h4>
-      <p>Produce el plan de gestión del proyecto: hoja de ruta detallada que define qué se hará, cuándo, con qué recursos y bajo qué restricciones. Es la fase de mayor inversión intelectual del proyecto.</p>
-      <ul class="feature-list">
-        <li>Descomposición del trabajo mediante WBS (EDT)</li>
-        <li>Estimación de tiempos, esfuerzo y recursos necesarios</li>
-        <li>Plan de comunicación con stakeholders</li>
-        <li>Registro de riesgos con probabilidad, impacto y respuesta</li>
-        <li>Presupuesto base con reservas de contingencia</li>
-      </ul>
-    </div>
-  </div>
-  <div class="phase-item">
-    <div class="phase-left">
-      <div class="phase-dot">03</div>
-      <div class="phase-line"></div>
-    </div>
-    <div class="phase-body">
-      <h4>Fase de Ejecución</h4>
-      <p>El equipo lleva a cabo el trabajo definido en el plan. El director de proyecto coordina recursos, gestiona impedimentos y mantiene la comunicación activa con todos los involucrados.</p>
-      <ul class="feature-list">
-        <li>Implementación de actividades según cronograma</li>
-        <li>Comunicación constante y gestión de expectativas</li>
-        <li>Generación de informes de avance periódicos</li>
-        <li>Gestión de reuniones de seguimiento y prioridades</li>
-      </ul>
-    </div>
-  </div>
-  <div class="phase-item">
-    <div class="phase-left">
-      <div class="phase-dot">04</div>
-      <div class="phase-line"></div>
-    </div>
-    <div class="phase-body">
-      <h4>Fase de Control y Monitoreo</h4>
-      <p>Proceso continuo que corre en paralelo con la ejecución. Mide el desempeño real contra la línea base del plan y activa acciones correctivas ante desviaciones detectadas.</p>
-      <ul class="feature-list">
-        <li>Verificación de cumplimiento de objetivos e hitos</li>
-        <li>Control del uso de recursos vs. presupuesto asignado</li>
-        <li>Análisis de variaciones (schedule variance, cost variance)</li>
-        <li>Generación de reportes ejecutivos del estado del proyecto</li>
-      </ul>
-    </div>
-  </div>
-  <div class="phase-item">
-    <div class="phase-left">
-      <div class="phase-dot">05</div>
-      <div class="phase-line"></div>
-    </div>
-    <div class="phase-body">
-      <h4>Fase de Cierre</h4>
-      <p>Formaliza la finalización del proyecto. Documenta lecciones aprendidas, transfiere el producto al cliente u operaciones, y libera formalmente los recursos del equipo.</p>
-      <ul class="feature-list">
-        <li>Revisión y validación de todos los entregables acordados</li>
-        <li>Evaluación del cumplimiento de objetivos originales</li>
-        <li>Documentación de lecciones aprendidas y mejoras futuras</li>
-        <li>Cierre administrativo y financiero formal del proyecto</li>
-      </ul>
-    </div>
-  </div>
-</div>
+    <div class="lyric__bg-text" aria-hidden="true">XO</div>
+  </section>
 
-<!-- DIRECTOR TI -->
-<div class="section-header reveal" style="padding-top:2rem;">
-  <div class="section-header-text">
-    <h2 style="font-size:1rem;">Responsabilidades del Director de Proyectos TI</h2>
-    <p>El director controla ocho dimensiones críticas a lo largo del ciclo de vida del proyecto (modelo basado en PMBOK y modelo IMC).</p>
-  </div>
-</div>
-
-<div class="dir-grid reveal">
-  <div class="dir-card">
-    <div class="dir-card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 3H3v18l4-4h14V3z"/></svg></div>
-    <h4>Alcance</h4>
-    <p>Define y controla qué está y qué no está incluido en el proyecto</p>
-  </div>
-  <div class="dir-card">
-    <div class="dir-card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
-    <h4>Tiempo</h4>
-    <p>Planifica y controla el cronograma para cumplir plazos de entrega</p>
-  </div>
-  <div class="dir-card">
-    <div class="dir-card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg></div>
-    <h4>Costos</h4>
-    <p>Gestiona el presupuesto y controla el gasto real vs. planificado</p>
-  </div>
-  <div class="dir-card">
-    <div class="dir-card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></div>
-    <h4>Calidad</h4>
-    <p>Asegura que los entregables cumplan estándares y requisitos acordados</p>
-  </div>
-  <div class="dir-card">
-    <div class="dir-card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/></svg></div>
-    <h4>Recursos Humanos</h4>
-    <p>Organiza, desarrolla y dirige el equipo de trabajo del proyecto</p>
-  </div>
-  <div class="dir-card">
-    <div class="dir-card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></div>
-    <h4>Riesgos</h4>
-    <p>Identifica, analiza y planifica respuestas a amenazas y oportunidades</p>
-  </div>
-  <div class="dir-card">
-    <div class="dir-card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg></div>
-    <h4>Comunicación</h4>
-    <p>Garantiza flujo de información oportuna entre todos los stakeholders</p>
-  </div>
-  <div class="dir-card">
-    <div class="dir-card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/></svg></div>
-    <h4>Integración</h4>
-    <p>Coordina y unifica todos los procesos y áreas del proyecto como sistema</p>
-  </div>
-</div>
-
-<div class="triple-constraint reveal">
-  <div class="tc-cell">
-    <div class="tc-label">Modelo IMC</div>
-    <div class="tc-value">Tiempo</div>
-    <div class="tc-desc">Control del cronograma y cumplimiento de hitos. Métrica: schedule variance (SV)</div>
-  </div>
-  <div class="tc-cell" style="border-left:1px solid var(--blue-100);border-right:1px solid var(--blue-100);">
-    <div class="tc-label">Modelo IMC</div>
-    <div class="tc-value">Costo</div>
-    <div class="tc-desc">Control presupuestario con EVM. Métrica: cost variance (CV) y CPI</div>
-  </div>
-  <div class="tc-cell">
-    <div class="tc-label">Modelo IMC</div>
-    <div class="tc-value">Calidad</div>
-    <div class="tc-desc">Conformidad con requisitos técnicos y funcionales. Base: criterios de aceptación</div>
-  </div>
-</div>
-
-<!-- MARCO REGULATORIO -->
-<div class="section-header reveal" style="padding-top:2rem;">
-  <div class="section-header-text">
-    <h2 style="font-size:1rem;">Marco Regulatorio del Desarrollo de Software en México</h2>
-    <p>Legislación vigente que regula los derechos, obligaciones y responsabilidades en proyectos de software.</p>
-  </div>
-</div>
-
-<div class="highlight reveal">
-  <h3>Riesgos legales en proyectos de software no regulados</h3>
-  <p>Los proyectos TI sin marco regulatorio adecuado exponen a la organización a vulnerabilidades críticas: intrusión de actores maliciosos (hackers), fraudes informáticos, violación de propiedad intelectual sobre código fuente, y comisión de delitos informáticos tipificados en el Código Penal Federal. La ética profesional del equipo de desarrollo es también un componente regulatorio implícito reconocido en el marco normativo mexicano.</p>
-</div>
-
-<div class="ley-list reveal">
-  <div class="ley-item">
-    <div class="ley-num">1</div>
-    <div class="ley-text">
-      <h5>Ley Federal del Derecho de Autor</h5>
-      <p>Protege el código fuente y la documentación técnica como obras de autoría desde el momento de su creación. Regula cesión de derechos y licenciamiento.</p>
-    </div>
-  </div>
-  <div class="ley-item">
-    <div class="ley-num">2</div>
-    <div class="ley-text">
-      <h5>Ley Federal de la Propiedad Industrial</h5>
-      <p>Regula patentes, marcas y secretos industriales aplicables a innovaciones tecnológicas desarrolladas en proyectos de software.</p>
-    </div>
-  </div>
-  <div class="ley-item">
-    <div class="ley-num">3</div>
-    <div class="ley-text">
-      <h5>Derecho a la Información y Transparencia</h5>
-      <p>Obliga a sistemas gubernamentales y públicos a garantizar acceso ciudadano a datos e información generada con recursos públicos.</p>
-    </div>
-  </div>
-  <div class="ley-item">
-    <div class="ley-num">4</div>
-    <div class="ley-text">
-      <h5>Código Penal Federal — Delitos Informáticos</h5>
-      <p>Tipifica como delitos el acceso no autorizado a sistemas, la destrucción de datos y la intercepción de comunicaciones digitales. Define sanciones penales.</p>
-    </div>
-  </div>
-  <div class="ley-item">
-    <div class="ley-num">5</div>
-    <div class="ley-text">
-      <h5>Ética Profesional en TI</h5>
-      <p>Establece obligaciones deontológicas del profesional de software: confidencialidad, competencia técnica, veracidad en reportes y respeto a los derechos de terceros.</p>
-    </div>
-  </div>
-</div>
-
-<!-- ------------------------------------------------------
-     MÓDULO 1: TIPOS DE PROYECTOS
------------------------------------------------------- -->
-<div id="tipos" class="section-header reveal">
-  <div class="section-icon blue">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-  </div>
-  <div class="section-header-text">
-    <h2>01 · Tipos de Proyectos de Software</h2>
-    <p>Clasificación por origen, naturaleza y modelo de entrega. Cada categoría implica estructuras contractuales y de gestión distintas.</p>
-  </div>
-</div>
-<div class="divider"></div>
-
-<div class="grid-3 reveal">
-  <div class="card">
-    <span class="card-tag">Clasificación por origen</span>
-    <h3>Proyectos Internos</h3>
-    <p>Desarrollados dentro de la organización para automatizar o mejorar procesos propios. El cliente es interno y el financiamiento proviene del presupuesto corporativo.</p>
-    <ul class="feature-list">
-      <li>Sin contrato formal externo</li>
-      <li>Mayor flexibilidad en requisitos</li>
-      <li>Alineados a objetivos de negocio directos</li>
-      <li>Riesgo financiero asumido por la empresa</li>
-    </ul>
-  </div>
-  <div class="card">
-    <span class="card-tag">Clasificación por origen</span>
-    <h3>Proyectos Externos / Outsourcing</h3>
-    <p>Soluciones entregadas a un cliente externo bajo contrato formal. Incluyen SLA, penalizaciones por incumplimiento y transferencia de propiedad intelectual.</p>
-    <ul class="feature-list">
-      <li>Contrato con alcance y entregables definidos</li>
-      <li>Presupuesto fijo o bajo modelo T&M</li>
-      <li>Gestión formal de cambios de alcance</li>
-      <li>Cláusulas de confidencialidad y derechos de autor</li>
-    </ul>
-  </div>
-  <div class="card">
-    <span class="card-tag">Clasificación por naturaleza</span>
-    <h3>Proyectos de Producto (SaaS)</h3>
-    <p>Desarrollo de software empaquetado para múltiples clientes bajo modelo de suscripción. Implica evolución continua y gestión de versiones.</p>
-    <ul class="feature-list">
-      <li>Roadmap de funcionalidades estructurado</li>
-      <li>Modelo de ingresos recurrente (MRR/ARR)</li>
-      <li>Gestión de multitenancy y seguridad de datos</li>
-      <li>SLA con uptime garantizado (99.9% o superior)</li>
-    </ul>
-  </div>
-</div>
-
-<div class="highlight reveal">
-  <h3>Atributos críticos de todo proyecto de software bien gestionado</h3>
-  <p>Un proyecto de software profesional requiere: alcance documentado y firmado (previene scope creep), gestión de riesgos activa con registro de probabilidad e impacto, control de versiones con política de branches definida, trazabilidad de requisitos desde la necesidad de negocio hasta el código y la prueba, y criterios de aceptación definidos antes de comenzar el desarrollo. La ausencia de cualquiera de estos elementos es un indicador predictivo de fracaso del proyecto.</p>
-</div>
-
-<!-- ------------------------------------------------------
-     MÓDULO 2: CERTIFICACIONES IT
------------------------------------------------------- -->
-<div id="certs" class="section-header reveal">
-  <div class="section-icon cyan">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89L17 22l-5-3-5 3 1.523-9.11"/></svg>
-  </div>
-  <div class="section-header-text">
-    <h2>02 · Certificaciones IT Mejor Cotizadas en las Organizaciones</h2>
-    <p>Validaciones técnicas reconocidas internacionalmente que acreditan competencia profesional y elevan el perfil de los equipos de TI dentro de las organizaciones.</p>
-  </div>
-</div>
-<div class="divider"></div>
-
-<div class="highlight reveal">
-  <h3>Valor organizacional de las certificaciones IT</h3>
-  <p>Las certificaciones son avales de calidad que validan habilidades específicas ante un ente reconocido internacionalmente. Para las organizaciones representan garantía de competencia técnica verificable, reducción de riesgos operativos y ventaja en procesos de licitación. Para los profesionales significan incrementos salariales documentados de entre 15% y 40% sobre roles sin certificación equivalente. Son consideradas el entrenamiento más valioso para desarrollar habilidades orientadas al futuro del sector tecnológico.</p>
-</div>
-
-<div class="grid-2 reveal">
-  <div class="cert-card">
-    <div class="cert-header">
-      <div class="cert-name">CISM — Certified Information Security Manager</div>
-      <span class="cert-badge green">Seguridad</span>
-    </div>
-    <div class="cert-body">Emitida por ISACA. Orientada a gestión estratégica de seguridad de la información. Cubre gobierno, gestión de riesgos, respuesta a incidentes y programa de seguridad corporativa.</div>
-    <ul class="feature-list">
-      <li>Requiere 5 años de experiencia en seguridad de la información</li>
-      <li>Enfocada en roles gerenciales y CISO</li>
-      <li>Reconocimiento global en procesos de auditoría corporativa</li>
-    </ul>
-    <div class="cert-salary">Rango salarial: $120,000–$165,000 USD/año</div>
-  </div>
-  <div class="cert-card">
-    <div class="cert-header">
-      <div class="cert-name">AWS Certified Solutions Architect – Associate</div>
-      <span class="cert-badge blue">Cloud</span>
-    </div>
-    <div class="cert-body">La certificación cloud más demandada del mercado. Valida diseño de arquitecturas escalables, seguras y de alto rendimiento sobre infraestructura AWS.</div>
-    <ul class="feature-list">
-      <li>Dominio de servicios EC2, S3, RDS, VPC, IAM</li>
-      <li>Diseño de arquitecturas resilientes y costo-eficientes</li>
-      <li>Puerta de entrada al ecosistema cloud profesional</li>
-    </ul>
-    <div class="cert-salary">Rango salarial: $125,000–$160,000 USD/año</div>
-  </div>
-  <div class="cert-card">
-    <div class="cert-header">
-      <div class="cert-name">CCIE — Cisco Certified Internetwork Expert</div>
-      <span class="cert-badge amber">Redes</span>
-    </div>
-    <div class="cert-body">Considerada el nivel más alto de certificación en redes. Examen práctico de 8 horas en laboratorio físico. Valida diseño, implementación y troubleshooting de redes de alta complejidad.</div>
-    <ul class="feature-list">
-      <li>Tasa de aprobación inferior al 26% a nivel mundial</li>
-      <li>Especialidades: Enterprise, Security, Data Center, SP</li>
-      <li>Alta escasez de profesionales certificados en el mercado</li>
-    </ul>
-    <div class="cert-salary">Rango salarial: $130,000–$200,000 USD/año</div>
-  </div>
-  <div class="cert-card">
-    <div class="cert-header">
-      <div class="cert-name">PMP — Project Management Professional</div>
-      <span class="cert-badge blue">Gestión</span>
-    </div>
-    <div class="cert-body">Emitida por PMI. Estándar global para la gerencia de proyectos. Cubre PMBOK, metodologías predictivas y ágiles, liderazgo y gestión de stakeholders.</div>
-    <ul class="feature-list">
-      <li>Válida para múltiples industrias más allá de TI</li>
-      <li>Requiere 36 meses liderando equipos de proyecto</li>
-      <li>Reconocida en más de 180 países</li>
-    </ul>
-    <div class="cert-salary">Rango salarial: $108,000–$155,000 USD/año</div>
-  </div>
-  <div class="cert-card">
-    <div class="cert-header">
-      <div class="cert-name">CEH — Certified Ethical Hacker</div>
-      <span class="cert-badge green">Ciberseguridad</span>
-    </div>
-    <div class="cert-body">Emitida por EC-Council. Capacita para identificar vulnerabilidades usando las mismas técnicas que actores maliciosos, con autorización legal y marco ético definido.</div>
-    <ul class="feature-list">
-      <li>Cubre más de 20 módulos de hacking ético</li>
-      <li>Pentesting, ingeniería social, análisis de malware</li>
-      <li>Valorada por gobiernos y empresas Fortune 500</li>
-    </ul>
-    <div class="cert-salary">Rango salarial: $90,000–$140,000 USD/año</div>
-  </div>
-  <div class="cert-card">
-    <div class="cert-header">
-      <div class="cert-name">MCSE — Microsoft Certified Solutions Expert</div>
-      <span class="cert-badge blue">Microsoft</span>
-    </div>
-    <div class="cert-body">Acredita experiencia avanzada en el ecosistema Microsoft: Azure, Windows Server, SQL Server. Diseño, implementación y administración de infraestructura empresarial.</div>
-    <ul class="feature-list">
-      <li>Integra componentes on-premise y cloud híbrido</li>
-      <li>Especialidades: Core Infrastructure, Data Management, Productivity</li>
-      <li>Alta demanda en corporativos con infraestructura Microsoft</li>
-    </ul>
-    <div class="cert-salary">Rango salarial: $95,000–$145,000 USD/año</div>
-  </div>
-</div>
-
-<!-- ------------------------------------------------------
-     MÓDULO 3: METODOLOGÍAS ÁGILES
------------------------------------------------------- -->
-<div id="agile" class="section-header reveal">
-  <div class="section-icon blue">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
-  </div>
-  <div class="section-header-text">
-    <h2>03 · Metodologías Ágiles más Utilizadas</h2>
-    <p>Marcos de trabajo iterativos que priorizan la entrega de valor continuo, la colaboración y la adaptación al cambio sobre la planificación rígida.</p>
-  </div>
-</div>
-<div class="divider"></div>
-
-<div class="highlight reveal">
-  <h3>Manifiesto Ágil — 4 Valores Fundamentales (2001)</h3>
-  <p>Las metodologías ágiles se fundamentan en cuatro valores: individuos e interacciones sobre procesos y herramientas; software funcionando sobre documentación exhaustiva; colaboración con el cliente sobre negociación contractual; respuesta al cambio sobre seguir un plan. La correcta implementación de estas metodologías en los equipos de trabajo genera ventajas competitivas documentadas en el mercado.</p>
-</div>
-
-<div class="agile-grid reveal">
-  <div class="agile-card">
-    <div class="agile-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/></svg></div>
-    <h3>Scrum</h3>
-    <p>Marco iterativo basado en Sprints de 2–4 semanas. Roles definidos: Product Owner, Scrum Master y Development Team. Artefactos: Product Backlog, Sprint Backlog e Increment.</p>
-    <ul class="feature-list">
-      <li>Ceremonias: Planning, Daily, Review, Retrospectiva</li>
-      <li>Velocidad del equipo medible y predecible</li>
-      <li>Ideal para equipos de 5–9 personas</li>
-    </ul>
-    <div class="agile-pill-row"><span class="pill">Iterativo</span><span class="pill">Timeboxing</span><span class="pill">Roles definidos</span></div>
-  </div>
-  <div class="agile-card">
-    <div class="agile-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg></div>
-    <h3>Kanban</h3>
-    <p>Gestión visual de flujo continuo de trabajo. Sin iteraciones fijas: las tareas avanzan desde el backlog hasta "Completado" con límites WIP que previenen sobrecargas.</p>
-    <ul class="feature-list">
-      <li>WIP Limits para control de trabajo en curso</li>
-      <li>Lead Time y Cycle Time como métricas primarias</li>
-      <li>Políticas explícitas por columna del tablero</li>
-    </ul>
-    <div class="agile-pill-row"><span class="pill">Flujo continuo</span><span class="pill">Visual</span><span class="pill">Pull system</span></div>
-  </div>
-  <div class="agile-card">
-    <div class="agile-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 20V10M12 20V4M6 20v-6"/></svg></div>
-    <h3>SAFe</h3>
-    <p>Extiende Scrum a nivel empresarial para coordinar múltiples equipos hacia objetivos estratégicos. Opera en 4 niveles: Team, Program, Large Solution y Portfolio.</p>
-    <ul class="feature-list">
-      <li>Program Increment: planificación cada 8–12 semanas</li>
-      <li>Agile Release Trains: grupos de 50–125 personas</li>
-      <li>Alineación negocio, tecnología y estrategia</li>
-    </ul>
-    <div class="agile-pill-row"><span class="pill">Escalable</span><span class="pill">Empresarial</span><span class="pill">Multi-equipo</span></div>
-  </div>
-  <div class="agile-card">
-    <div class="agile-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg></div>
-    <h3>XP — Extreme Programming</h3>
-    <p>Metodología técnica que lleva las buenas prácticas de ingeniería al nivel máximo. Orientada a calidad del código y respuesta rápida ante requisitos cambiantes.</p>
-    <ul class="feature-list">
-      <li>TDD: pruebas escritas antes del código de producción</li>
-      <li>Pair Programming: dos desarrolladores, una estación</li>
-      <li>Integración continua y refactoring constante</li>
-    </ul>
-    <div class="agile-pill-row"><span class="pill">TDD</span><span class="pill">Pair coding</span><span class="pill">CI/CD</span></div>
-  </div>
-  <div class="agile-card">
-    <div class="agile-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/></svg></div>
-    <h3>Lean Software Development</h3>
-    <p>Adaptación de principios Toyota al software. Elimina desperdicios del proceso para maximizar el valor entregado al cliente en cada iteración.</p>
-    <ul class="feature-list">
-      <li>7 principios: eliminar desperdicio, ampliar aprendizaje...</li>
-      <li>Decisiones tardías: decidir con máxima información</li>
-      <li>Entrega en lotes pequeños y alta frecuencia</li>
-    </ul>
-    <div class="agile-pill-row"><span class="pill">Sin desperdicio</span><span class="pill">Valor primero</span><span class="pill">Flujo</span></div>
-  </div>
-  <div class="agile-card">
-    <div class="agile-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg></div>
-    <h3>RUP — Rational Unified Process</h3>
-    <p>Metodología de ingeniería de software orientada a alta calidad, planificación estructurada y presupuesto predecible. Divide el proyecto en 4 fases con hitos definidos.</p>
-    <ul class="feature-list">
-      <li>Fases: Inception, Elaboration, Construction, Transition</li>
-      <li>Basado en casos de uso como motor del desarrollo</li>
-      <li>Arquitectura estable desde las primeras fases</li>
-    </ul>
-    <div class="agile-pill-row"><span class="pill">Iterativo</span><span class="pill">Arquitectura</span><span class="pill">Calidad</span></div>
-  </div>
-  <div class="agile-card">
-    <div class="agile-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
-    <h3>Cascada (Waterfall)</h3>
-    <p>Modelo clásico, secuencial y lineal: cada fase debe completarse por completo antes de iniciar la siguiente. No pertenece a las metodologías ágiles, pero es la base histórica frente a la que estas surgieron como alternativa.</p>
-    <ul class="feature-list">
-      <li>Secuencia: Requisitos → Diseño → Implementación → Verificación → Mantenimiento</li>
-      <li>Alta documentación y planificación previa detallada</li>
-      <li>Rígido ante cambios de requisitos a mitad de proyecto</li>
-    </ul>
-    <div class="agile-pill-row"><span class="pill">Secuencial</span><span class="pill">Predictivo</span><span class="pill">Documentado</span></div>
-  </div>
-</div>
-
-<!-- ------------------------------------------------------
-     MÓDULO 4: NORMAS Y ESTÁNDARES
------------------------------------------------------- -->
-<div id="normas" class="section-header reveal">
-  <div class="section-icon blue">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
-  </div>
-  <div class="section-header-text">
-    <h2>04 · Normas y Estándares de TI de Acuerdo al Proyecto</h2>
-    <p>Marcos normativos internacionales que garantizan calidad, seguridad e interoperabilidad. La selección depende del tipo, criticidad y contexto del proyecto.</p>
-  </div>
-</div>
-<div class="divider"></div>
-
-<!-- ISO de Calidad de Software -->
-<div class="section-header reveal" style="padding-top:0.5rem;margin-bottom:0.8rem;">
-  <div class="section-header-text">
-    <h2 style="font-size:0.95rem;color:var(--blue-700);">Normas ISO — Calidad del Ciclo de Vida del Software</h2>
-  </div>
-</div>
-
-<div class="norm-row reveal">
-  <div class="norm-num">ISO 9000 / ISO 9001</div>
-  <div class="norm-body">
-    <h4>Gestión y Aseguramiento de Calidad</h4>
-    <p>ISO 9001 establece requisitos para un Sistema de Gestión de Calidad aplicable a cualquier organización. En software garantiza procesos documentados, control de no conformidades y mejora continua. Base para certificar la madurez de un departamento de desarrollo ante clientes y auditores.</p>
-  </div>
-</div>
-<div class="norm-row reveal">
-  <div class="norm-num">ISO 12207</div>
-  <div class="norm-body">
-    <h4>Procesos del Ciclo de Vida del Software</h4>
-    <p>Define el conjunto de procesos, actividades y tareas que forman el ciclo de vida completo del software: desde la especificación de requisitos y el desarrollo hasta la entrega, operación y retiro del sistema. Establece un vocabulario común entre cliente, proveedor y organización.</p>
-  </div>
-</div>
-<div class="norm-row reveal">
-  <div class="norm-num">ISO 9126</div>
-  <div class="norm-body">
-    <h4>Modelo de Calidad del Producto de Software</h4>
-    <p>Define seis características para evaluar la calidad de un producto software: funcionalidad (hace lo que debe hacer), confiabilidad (opera sin fallos), usabilidad (facilidad de uso), eficiencia (rendimiento bajo recursos), mantenibilidad (facilidad de modificación) y portabilidad (adaptación a diferentes entornos).</p>
-  </div>
-</div>
-<div class="norm-row reveal">
-  <div class="norm-num">ISO 14598</div>
-  <div class="norm-body">
-    <h4>Evaluación de Productos de Software</h4>
-    <p>Complementa ISO 9126 definiendo los procesos de evaluación: planeación de la evaluación, especificación de métricas, diseño de la evaluación, ejecución y generación de resultados. Aplica tanto para evaluadores internos como terceros independientes.</p>
-  </div>
-</div>
-<div class="norm-row reveal">
-  <div class="norm-num">ISO/IEC 25000</div>
-  <div class="norm-body">
-    <h4>SQuaRE — Requisitos y Evaluación de Calidad de Software</h4>
-    <p>Sistema unificado que consolida y evoluciona las normas ISO 9126 e ISO 14598. Proporciona guías, modelos, métricas y procesos para evaluar la calidad de sistemas y productos de software bajo un marco coherente y completo.</p>
-  </div>
-</div>
-
-<!-- Estándares de seguridad y gestión -->
-<div class="section-header reveal" style="padding-top:1.5rem;margin-bottom:0.8rem;">
-  <div class="section-header-text">
-    <h2 style="font-size:0.95rem;color:var(--blue-700);">Estándares de Seguridad, Gestión y Mejora de Procesos</h2>
-  </div>
-</div>
-
-<div class="norm-row reveal">
-  <div class="norm-num">ISO/IEC 27001</div>
-  <div class="norm-body">
-    <h4>Sistema de Gestión de Seguridad de la Información (SGSI)</h4>
-    <p>Estándar de facto para seguridad de la información. Define controles para proteger la confidencialidad, integridad y disponibilidad. Obligatoria en proyectos que manejen datos sensibles, financieros o de salud. Requisito en contratos con clientes europeos bajo marco GDPR.</p>
-  </div>
-</div>
-<div class="norm-row reveal">
-  <div class="norm-num">CMMI</div>
-  <div class="norm-body">
-    <h4>Capability Maturity Model Integration — Madurez de Procesos</h4>
-    <p>Modelo de 5 niveles (Inicial hasta Optimizado) que mide la madurez del proceso de desarrollo. Nivel 3 es requisito para contratos gubernamentales en varios países. Diferenciador clave en licitaciones empresariales de alto valor.</p>
-  </div>
-</div>
-<div class="norm-row reveal">
-  <div class="norm-num">ITIL v4</div>
-  <div class="norm-body">
-    <h4>Information Technology Infrastructure Library</h4>
-    <p>Marco de mejores prácticas para alinear servicios TI con necesidades de negocio. Cubre gestión de incidentes, cambios, problemas y configuración. Reduce el tiempo de resolución de incidentes hasta un 40% en organizaciones que lo implementan correctamente.</p>
-  </div>
-</div>
-<div class="norm-row reveal">
-  <div class="norm-num">OWASP Top 10</div>
-  <div class="norm-body">
-    <h4>Seguridad en Aplicaciones Web</h4>
-    <p>Lista las 10 vulnerabilidades más críticas en aplicaciones web (inyección SQL, XSS, IDOR, configuraciones inseguras, etc.). Todo proyecto web debe verificar y documentar su posición ante este listado antes de pasar a producción.</p>
-  </div>
-</div>
-<div class="norm-row reveal">
-  <div class="norm-num">MoProSoft</div>
-  <div class="norm-body">
-    <h4>Modelo Mexicano de Procesos para Software</h4>
-    <p>Modelo desarrollado específicamente para el contexto mexicano. Define procesos para el desarrollo y mantenimiento de software basados en buenas prácticas internacionales. Orientado a mejorar la gestión de proyectos, la calidad de los productos y la competitividad de las empresas de software en México.</p>
-  </div>
-</div>
-<div class="norm-row reveal">
-  <div class="norm-num">IEEE 830</div>
-  <div class="norm-body">
-    <h4>Especificación de Requisitos de Software (SRS)</h4>
-    <p>Define el estándar para documentar requisitos funcionales y no funcionales. Una SRS bien estructurada bajo este estándar reduce hasta un 50% los errores introducidos en fases tardías del proyecto y es la base de los criterios de aceptación formales.</p>
-  </div>
-</div>
-<div class="norm-row reveal">
-  <div class="norm-num">PMBOK 7ª Ed.</div>
-  <div class="norm-body">
-    <h4>Project Management Body of Knowledge</h4>
-    <p>Guía del PMI con 12 principios de gestión y 8 dominios de desempeño. La 7ª edición integra enfoques ágiles e híbridos. Es el estándar de referencia para la certificación PMP y el marco más adoptado globalmente para gestión de proyectos.</p>
-  </div>
-</div>
-
-<table class="data-table reveal">
-  <thead>
-    <tr>
-      <th>Estándar / Norma</th>
-      <th>Ámbito principal</th>
-      <th>Tipo de proyecto recomendado</th>
-      <th>Prioridad</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr><td>ISO/IEC 27001</td><td>Seguridad de la información</td><td>Fintech, salud, gobierno, e-commerce</td><td><span class="tier-pill t-gold">Alta</span></td></tr>
-    <tr><td>CMMI Nivel 3+</td><td>Madurez de procesos</td><td>Contratos gubernamentales y corporativos</td><td><span class="tier-pill t-plat">Avanzado</span></td></tr>
-    <tr><td>ISO 12207</td><td>Ciclo de vida del software</td><td>Todos los proyectos de software</td><td><span class="tier-pill t-diamond">Base</span></td></tr>
-    <tr><td>ISO 9126 / 25000</td><td>Calidad del producto</td><td>Software con criterios de calidad formal</td><td><span class="tier-pill t-diamond">Base</span></td></tr>
-    <tr><td>ITIL v4</td><td>Gestión de servicios TI</td><td>Empresas con soporte y operaciones 24/7</td><td><span class="tier-pill t-gold">Alta</span></td></tr>
-    <tr><td>OWASP Top 10</td><td>Seguridad web</td><td>Aplicaciones web y móviles</td><td><span class="tier-pill t-gold">Alta</span></td></tr>
-    <tr><td>MoProSoft</td><td>Procesos para software (México)</td><td>PyMEs y empresas de software nacionales</td><td><span class="tier-pill t-silver">Complementario</span></td></tr>
-    <tr><td>IEEE 830</td><td>Documentación de requisitos</td><td>Proyectos con cliente externo formal</td><td><span class="tier-pill t-diamond">Base</span></td></tr>
-  </tbody>
-</table>
-
-<!-- ------------------------------------------------------
-     MÓDULO 5: CENTROS DE DATOS
------------------------------------------------------- -->
-<div id="dc" class="section-header reveal">
-  <div class="section-icon cyan">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="8" rx="2" ry="2"/><rect x="2" y="14" width="20" height="8" rx="2" ry="2"/><line x1="6" y1="6" x2="6.01" y2="6"/><line x1="6" y1="18" x2="6.01" y2="18"/></svg>
-  </div>
-  <div class="section-header-text">
-    <h2>05 · Centros de Datos: Qué Son y Cómo Funcionan</h2>
-    <p>Infraestructura física y lógica que almacena, procesa y distribuye información de organizaciones y servicios digitales a escala global.</p>
-  </div>
-</div>
-<div class="divider"></div>
-
-<div class="highlight reveal">
-  <h3>El pilar de la transformación digital</h3>
-  <p>Netflix, Amazon, Spotify, Uber y Google procesan cantidades masivas de información digital almacenada en centros de datos. México se ha posicionado como potencia global en esta industria, siendo un hub estratégico para Latinoamérica gracias a su conectividad de fibra, posición geográfica privilegiada y creciente ecosistema de operadores. Los centros de datos se han convertido en el pilar esencial que soporta la infraestructura de computación en nube, inteligencia artificial y servicios digitales críticos.</p>
-</div>
-
-<div class="dc-grid reveal">
-  <div class="dc-feature">
-    <div class="dc-feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 7H4a2 2 0 00-2 2v6a2 2 0 002 2h16a2 2 0 002-2V9a2 2 0 00-2-2z"/><circle cx="12" cy="12" r="1"/></svg></div>
-    <div>
-      <h4>Servidores y Cómputo</h4>
-      <p>Racks de servidores con CPU de alta densidad (Intel Xeon, AMD EPYC), memoria RAM de hasta 6TB por nodo y almacenamiento NVMe de baja latencia. Configurados en clusters para alta disponibilidad.</p>
-    </div>
-  </div>
-  <div class="dc-feature">
-    <div class="dc-feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg></div>
-    <div>
-      <h4>Energía y Redundancia</h4>
-      <p>Sistemas de energía ininterrumpida (UPS), generadores diésel de respaldo y fuentes de alimentación en configuración N+1 o 2N. Garantizan disponibilidad de 99.999% en instalaciones Tier IV.</p>
-    </div>
-  </div>
-  <div class="dc-feature">
-    <div class="dc-feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12h20M12 2l10 10-10 10-10-10 10-10z"/></svg></div>
-    <div>
-      <h4>Conectividad de Red</h4>
-      <p>Múltiples proveedores de internet (ISP redundancy), fibra óptica de alta capacidad, routers BGP nivel carrier y peering directo con CDNs globales para minimizar latencia hacia usuarios finales.</p>
-    </div>
-  </div>
-  <div class="dc-feature">
-    <div class="dc-feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
-    <div>
-      <h4>Seguridad Física y Lógica</h4>
-      <p>Acceso biométrico, CCTV 24/7, zonas de acceso controlado. Segmentación de red con firewalls de nueva generación, IDS/IPS y plataformas SIEM para monitoreo y correlación de eventos.</p>
-    </div>
-  </div>
-  <div class="dc-feature">
-    <div class="dc-feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.5 10c-.83 0-1.5-.67-1.5-1.5v-5c0-.83.67-1.5 1.5-1.5s1.5.67 1.5 1.5v5c0 .83-.67 1.5-1.5 1.5z"/><path d="M20.5 10H19V8.5c0-.83.67-1.5 1.5-1.5s1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/><path d="M9.5 14c.83 0 1.5.67 1.5 1.5v5c0 .83-.67 1.5-1.5 1.5S8 21.33 8 20.5v-5c0-.83.67-1.5 1.5-1.5z"/><path d="M3.5 14H5v1.5c0 .83-.67 1.5-1.5 1.5S2 16.33 2 15.5 2.67 14 3.5 14z"/><path d="M14 14.5c0-.83.67-1.5 1.5-1.5h5c.83 0 1.5.67 1.5 1.5s-.67 1.5-1.5 1.5h-5c-.83 0-1.5-.67-1.5-1.5z"/><path d="M10 9.5C10 8.67 9.33 8 8.5 8h-5C2.67 8 2 8.67 2 9.5S2.67 11 3.5 11h5c.83 0 1.5-.67 1.5-1.5z"/></svg></div>
-    <div>
-      <h4>Climatización (HVAC)</h4>
-      <p>Sistemas de refrigeración por aire (CRAC/CRAH), corredores calientes/fríos para gestión térmica eficiente, y tecnologías avanzadas como free cooling y liquid cooling para alta densidad de cómputo.</p>
-    </div>
-  </div>
-  <div class="dc-feature">
-    <div class="dc-feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg></div>
-    <div>
-      <h4>Gestión y Monitoreo (DCIM)</h4>
-      <p>Data Center Infrastructure Management: plataforma de software que monitorea temperatura, consumo energético (PUE — Power Usage Effectiveness), capacidad de racks y salud de equipos en tiempo real.</p>
-    </div>
-  </div>
-</div>
-
-
-</div>
-</div>
-<!-- ============ FIN VISTA PRIMER PARCIAL ============ -->
-
-<!-- ============ VISTA: SEGUNDO PARCIAL ============ -->
-<div class="app-view" id="view-p2">
-<div class="main">
-
-<div class="back-row reveal">
-  <button class="back-btn" onclick="setView('home')">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
-    Menú de parciales
-  </button>
-  <div class="subnav">
-    <a href="#pmbok">PMBOK</a>
-    <a href="#canvas">Modelo Canvas</a>
-    <a href="#complementos">Complementos</a>
-  </div>
-</div>
-
-<div class="highlight reveal">
-  <h3>Contenido de este parcial</h3>
-  <p>Este bloque cubre la <strong>Guía del PMBOK y la Metodología Canvas</strong>, la <strong>Metodología de la Investigación</strong> y cómo obtener un trabajo como <strong>Arquitecto de Nube</strong>. El tema "Metodologías para el Desarrollo de Software" de Classroom se retoma aquí de forma transversal: PMBOK y Canvas son, en sí mismos, metodologías para estructurar el desarrollo de un proyecto de software, y se apoyan en los marcos de trabajo ágiles ya revisados en el primer parcial.</p>
-</div>
-
-<!-- ------------------------------------------------------
-     MÓDULO 6: PMBOK
------------------------------------------------------- -->
-<div id="pmbok" class="section-header reveal">
-  <div class="section-icon amber">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/></svg>
-  </div>
-  <div class="section-header-text">
-    <h2>06 · PMBOK — Project Management Body of Knowledge</h2>
-    <p>El libro de mejores prácticas de referencia del examen parcial: guía del PMI que estandariza el vocabulario, los principios y los dominios de desempeño de la dirección de proyectos.</p>
-  </div>
-</div>
-<div class="divider"></div>
-
-<div class="highlight reveal">
-  <h3>¿Qué es el PMBOK?</h3>
-  <p>El <strong>PMBOK (A Guide to the Project Management Body of Knowledge)</strong> es la guía publicada por el <strong>PMI (Project Management Institute)</strong> que recopila las mejores prácticas, el vocabulario común y los estándares para dirigir proyectos en cualquier industria. Es la base normativa de la certificación PMP y el marco de referencia más citado a nivel mundial en gestión de proyectos. Su edición más reciente (7ª) dejó de estar organizada únicamente por procesos rígidos y pasó a un enfoque basado en <strong>principios</strong> y <strong>dominios de desempeño</strong>, dando cabida explícita a enfoques ágiles, predictivos e híbridos dentro de un mismo estándar.</p>
-</div>
-
-<div class="grid-2 reveal">
-  <div class="card">
-    <span class="card-tag">Estructura clásica (6ª ed.)</span>
-    <h3>5 Grupos de Procesos</h3>
-    <p>El enfoque tradicional del PMBOK organiza la dirección de proyectos en cinco grupos de procesos que se ejecutan de forma iterativa a lo largo del ciclo de vida, y que coinciden con las fases vistas en la gestión de proyectos TI.</p>
-    <ul class="feature-list">
-      <li>Inicio — autoriza formalmente el proyecto</li>
-      <li>Planificación — define alcance, tiempo y costo</li>
-      <li>Ejecución — coordina personas y recursos</li>
-      <li>Monitoreo y Control — mide y corrige desviaciones</li>
-      <li>Cierre — finaliza formalmente el proyecto o fase</li>
-    </ul>
-  </div>
-  <div class="card">
-    <span class="card-tag">Enfoque moderno (7ª ed.)</span>
-    <h3>De procesos a principios</h3>
-    <p>La 7ª edición del PMBOK reduce el énfasis en procesos prescriptivos y adopta 12 principios rectores junto con 8 dominios de desempeño, permitiendo adaptar (tailoring) el marco de trabajo según el contexto real del proyecto, sea predictivo, ágil o híbrido.</p>
-    <ul class="feature-list">
-      <li>Orientado a entregar valor, no solo a cumplir procesos</li>
-      <li>Compatible con Scrum, Kanban y modelos en cascada</li>
-      <li>El "tailoring" es un principio explícito de la guía</li>
-    </ul>
-  </div>
-</div>
-
-<div class="section-header reveal" style="padding-top:1.5rem;">
-  <div class="section-header-text">
-    <h2 style="font-size:1rem;">10 Áreas de Conocimiento</h2>
-    <p>Dominios de gestión que un director de proyectos debe dominar de forma transversal (enfoque de la 6ª edición, aún ampliamente enseñado y utilizado como referencia).</p>
-  </div>
-</div>
-<div class="ka-list reveal">
-  <div class="ka-row"><div class="ka-index">1</div><div class="ka-name">Integración</div><div class="ka-desc">Unifica y coordina todos los procesos y áreas como un solo sistema coherente</div></div>
-  <div class="ka-row"><div class="ka-index">2</div><div class="ka-name">Alcance</div><div class="ka-desc">Garantiza que el proyecto incluya todo el trabajo requerido y nada más</div></div>
-  <div class="ka-row"><div class="ka-index">3</div><div class="ka-name">Cronograma</div><div class="ka-desc">Planifica y controla la finalización del proyecto en tiempo</div></div>
-  <div class="ka-row"><div class="ka-index">4</div><div class="ka-name">Costos</div><div class="ka-desc">Planifica, estima y controla el presupuesto para completarlo dentro de lo aprobado</div></div>
-  <div class="ka-row"><div class="ka-index">5</div><div class="ka-name">Calidad</div><div class="ka-desc">Incorpora la política de calidad de la organización a la planificación y entregables</div></div>
-  <div class="ka-row"><div class="ka-index">6</div><div class="ka-name">Recursos</div><div class="ka-desc">Identifica, adquiere y gestiona los recursos humanos y materiales necesarios</div></div>
-  <div class="ka-row"><div class="ka-index">7</div><div class="ka-name">Comunicaciones</div><div class="ka-desc">Asegura que la información del proyecto se genere y distribuya oportunamente</div></div>
-  <div class="ka-row"><div class="ka-index">8</div><div class="ka-name">Riesgos</div><div class="ka-desc">Identifica, analiza y planifica respuestas ante amenazas y oportunidades</div></div>
-  <div class="ka-row"><div class="ka-index">9</div><div class="ka-name">Adquisiciones</div><div class="ka-desc">Gestiona la compra o adquisición de productos y servicios externos al equipo</div></div>
-  <div class="ka-row"><div class="ka-index">10</div><div class="ka-name">Interesados</div><div class="ka-desc">Identifica y gestiona las expectativas de todas las personas afectadas por el proyecto</div></div>
-</div>
-
-<div class="section-header reveal" style="padding-top:1.5rem;">
-  <div class="section-header-text">
-    <h2 style="font-size:1rem;">12 Principios de la Dirección de Proyectos (PMBOK 7ª Ed.)</h2>
-    <p>Guías de comportamiento fundamentales que orientan las decisiones del equipo, independientemente de la metodología elegida.</p>
-  </div>
-</div>
-<div class="principle-grid reveal">
-  <div class="principle-chip"><div class="principle-num">P.01</div><h5>Administración diligente</h5><p>Ser un administrador cuidadoso y responsable de los recursos</p></div>
-  <div class="principle-chip"><div class="principle-num">P.02</div><h5>Equipo</h5><p>Crear un entorno colaborativo de equipo</p></div>
-  <div class="principle-chip"><div class="principle-num">P.03</div><h5>Interesados</h5><p>Involucrar a los stakeholders de forma proactiva</p></div>
-  <div class="principle-chip"><div class="principle-num">P.04</div><h5>Valor</h5><p>Enfocarse en el valor entregado, no solo en el entregable</p></div>
-  <div class="principle-chip"><div class="principle-num">P.05</div><h5>Pensamiento sistémico</h5><p>Reconocer y responder a la dinámica del sistema completo</p></div>
-  <div class="principle-chip"><div class="principle-num">P.06</div><h5>Liderazgo</h5><p>Demostrar comportamientos de liderazgo genuinos</p></div>
-  <div class="principle-chip"><div class="principle-num">P.07</div><h5>Adaptación (tailoring)</h5><p>Adaptar el enfoque según el contexto del proyecto</p></div>
-  <div class="principle-chip"><div class="principle-num">P.08</div><h5>Calidad</h5><p>Incorporar la calidad en procesos y resultados</p></div>
-  <div class="principle-chip"><div class="principle-num">P.09</div><h5>Complejidad</h5><p>Navegar la complejidad del proyecto de forma consciente</p></div>
-  <div class="principle-chip"><div class="principle-num">P.10</div><h5>Riesgo</h5><p>Optimizar las respuestas ante amenazas y oportunidades</p></div>
-  <div class="principle-chip"><div class="principle-num">P.11</div><h5>Adaptabilidad y resiliencia</h5><p>Ser adaptable y resiliente frente al cambio</p></div>
-  <div class="principle-chip"><div class="principle-num">P.12</div><h5>Cambio</h5><p>Habilitar el cambio para alcanzar el estado futuro previsto</p></div>
-</div>
-
-<div class="section-header reveal" style="padding-top:1.5rem;">
-  <div class="section-header-text">
-    <h2 style="font-size:1rem;">8 Dominios de Desempeño</h2>
-    <p>Áreas de enfoque interrelacionadas que operan en conjunto para lograr los resultados deseados del proyecto.</p>
-  </div>
-</div>
-<div class="domain-grid reveal">
-  <div class="domain-card"><h5>Interesados</h5><p>Compromiso efectivo con quienes afectan o son afectados por el proyecto</p></div>
-  <div class="domain-card"><h5>Equipo</h5><p>Cultura y entorno que impulsan un alto desempeño colectivo</p></div>
-  <div class="domain-card"><h5>Enfoque de desarrollo y ciclo de vida</h5><p>Selección del método de entrega: predictivo, ágil o híbrido</p></div>
-  <div class="domain-card"><h5>Planificación</h5><p>Organización y coordinación inicial y continua del trabajo</p></div>
-  <div class="domain-card"><h5>Trabajo del proyecto</h5><p>Procesos necesarios para ejecutar el trabajo de forma eficiente</p></div>
-  <div class="domain-card"><h5>Entrega</h5><p>Cumplimiento del alcance y la calidad esperada por el cliente</p></div>
-  <div class="domain-card"><h5>Medición</h5><p>Evaluación del desempeño del proyecto y acciones correctivas</p></div>
-  <div class="domain-card"><h5>Incertidumbre</h5><p>Gestión activa del riesgo, la ambigüedad y el cambio</p></div>
-</div>
-
-<!-- ------------------------------------------------------
-     MÓDULO 7: MODELO CANVAS
------------------------------------------------------- -->
-<div id="canvas" class="section-header reveal">
-  <div class="section-icon cyan">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
-  </div>
-  <div class="section-header-text">
-    <h2>07 · Modelo Canvas — Business Model Canvas</h2>
-    <p>Herramienta visual de planificación estratégica utilizada en clase para diseñar y validar un modelo de negocio en una sola página, previo al desarrollo técnico del proyecto.</p>
-  </div>
-</div>
-<div class="divider"></div>
-
-<div class="highlight reveal">
-  <h3>¿Qué es el Business Model Canvas?</h3>
-  <p>Desarrollado por Alexander Osterwalder, el Canvas es un lienzo estratégico dividido en 9 bloques que describen cómo una organización crea, entrega y captura valor. Se utiliza en etapas tempranas de un proyecto —antes o junto con la iniciación PMBOK— para validar la viabilidad del negocio detrás de la solución de software que se va a construir. A continuación se presenta el Canvas elaborado por el equipo para el proyecto <strong>Sweet Market</strong>.</p>
-</div>
-
-<div class="canvas-wrap reveal">
-  <div class="canvas-image-frame">
-    <img src="canvassweetmarket.png" alt="Business Model Canvas del proyecto Sweet Market" loading="lazy">
-    <div class="canvas-caption">
-      <span>Elaborado por Noel Pacheco</span>
-      <strong>Canvas — Sweet Market</strong>
-    </div>
-  </div>
-  <div class="canvas-image-frame">
-    <img src="modelo_canvas.png" alt="Business Model Canvas del proyecto Sweet Market" loading="lazy">
-    <div class="canvas-caption">
-      <span>Elaborado por Diego Martinez</span>
-      <strong>Canvas — Gimnasio FitZone</strong>
-    </div>
-  </div>
-     <div class="canvas-image-frame">
-    <img src="edwin.jpeg" alt="Business Model Canvas del proyecto Sweet Market" loading="lazy">
-    <div class="canvas-caption">
-      <span>Elaborado por Edwin Calva</span>
-      <strong>Canvas — La mafia del sabor</strong>
-    </div>
-  </div>
-  <div class="canvas-blocks">
-    <div class="canvas-block"><div class="canvas-block-num">1</div><div><h5>Segmentos de clientes</h5><p>Grupos de personas u organizaciones a las que se dirige el negocio</p></div></div>
-    <div class="canvas-block"><div class="canvas-block-num">2</div><div><h5>Propuesta de valor</h5><p>El producto o servicio que resuelve un problema o satisface una necesidad</p></div></div>
-    <div class="canvas-block"><div class="canvas-block-num">3</div><div><h5>Canales</h5><p>Cómo se comunica, entrega y vende la propuesta de valor a los clientes</p></div></div>
-    <div class="canvas-block"><div class="canvas-block-num">4</div><div><h5>Relación con clientes</h5><p>El tipo de vínculo que se establece con cada segmento de clientes</p></div></div>
-    <div class="canvas-block"><div class="canvas-block-num">5</div><div><h5>Fuentes de ingresos</h5><p>Cómo el negocio genera efectivo a partir de cada segmento</p></div></div>
-    <div class="canvas-block"><div class="canvas-block-num">6</div><div><h5>Recursos clave</h5><p>Activos indispensables para que el modelo de negocio funcione</p></div></div>
-    <div class="canvas-block"><div class="canvas-block-num">7</div><div><h5>Actividades clave</h5><p>Acciones más importantes para que la propuesta de valor funcione</p></div></div>
-    <div class="canvas-block"><div class="canvas-block-num">8</div><div><h5>Socios clave</h5><p>Red de proveedores y aliados que hacen funcionar el modelo</p></div></div>
-    <div class="canvas-block"><div class="canvas-block-num">9</div><div><h5>Estructura de costos</h5><p>Todos los costos en los que se incurre para operar el modelo de negocio</p></div></div>
-  </div>
-</div>
-
-<!-- ------------------------------------------------------
-     MÓDULO 8: CONCEPTOS COMPLEMENTARIOS
------------------------------------------------------- -->
-<div id="complementos" class="section-header reveal">
-  <div class="section-icon amber">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
-  </div>
-  <div class="section-header-text">
-    <h2>08 · Conceptos Complementarios</h2>
-    <p>Nociones generales revisadas en clase que se conectan con la metodología de proyectos y con el perfil profesional del desarrollador.</p>
-  </div>
-</div>
-<div class="divider"></div>
-
-<div class="grid-2 reveal">
-  <div class="complement-card">
-    <span class="complement-eyebrow">Metodología de investigación</span>
-    <h3 style="font-family:'Sora',sans-serif;font-weight:700;font-size:0.92rem;color:var(--blue-900);margin-bottom:0.5rem;">Cómo se diseña una investigación</h3>
-    <p style="font-size:0.79rem;color:var(--slate-600);line-height:1.6;margin-bottom:0.6rem;">La metodología de investigación es el diseño sistemático que un investigador sigue para obtener resultados válidos y fiables. Todas las decisiones metodológicas parten de las metas y objetivos de la investigación.</p>
-    <ul class="feature-list">
-      <li><strong>Cualitativa</strong>: exploratoria, se centra en palabras y significados (entrevistas, observación)</li>
-      <li><strong>Cuantitativa</strong>: confirmatoria, mide y prueba mediante datos numéricos (encuestas, estadística)</li>
-      <li><strong>Mixta</strong>: combina ambos enfoques para una imagen más completa</li>
-      <li>Incluye diseño de muestreo, recolección y análisis de datos</li>
-    </ul>
-  </div>
-  <div class="complement-card">
-    <span class="complement-eyebrow">Perfil profesional emergente</span>
-    <h3 style="font-family:'Sora',sans-serif;font-weight:700;font-size:0.92rem;color:var(--blue-900);margin-bottom:0.5rem;">Arquitecto de Nube (Cloud Architect)</h3>
-    <p style="font-size:0.79rem;color:var(--slate-600);line-height:1.6;margin-bottom:0.6rem;">Profesional híbrido que evalúa las necesidades de una organización y diseña la arquitectura que permite usar la nube para alcanzar las metas del negocio. Combina maestría técnica con habilidades de planeación y liderazgo.</p>
-    <ul class="feature-list">
-      <li><strong>Flexibilidad</strong>: adaptarse con rapidez a escenarios y proyectos distintos</li>
-      <li><strong>Gestión del tiempo</strong>: equilibrar reuniones, desarrollo y soporte</li>
-      <li><strong>Comunicación</strong>: traducir decisiones técnicas al lenguaje del negocio</li>
-      <li><strong>Dominio técnico</strong>: programación, CI/CD, redes y certificaciones cloud (AWS, Azure, GCP)</li>
-    </ul>
-  </div>
-</div>
-
-</div>
-</div>
-<!-- ============ FIN VISTA SEGUNDO PARCIAL ============ -->
-
-<!-- ============ VISTA: TERCER PARCIAL (PRÓXIMAMENTE) ============ -->
-<div class="app-view" id="view-p3">
-<div class="main">
-
-<div class="back-row reveal">
-  <button class="back-btn" onclick="setView('home')">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
-    Menú de parciales
-  </button>
-  <div class="subnav"></div>
-</div>
-
-<div class="soon-panel reveal">
-  <div class="soon-icon">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
-  </div>
-  <h3>Tercer Parcial — Próximamente</h3>
-  <p>Todavía no se han publicado los temas del tercer parcial en Classroom. En cuanto estén disponibles, este espacio se llenará con el mismo formato y nivel de detalle que los parciales anteriores.</p>
-</div>
-
-</div>
-</div>
-<!-- ============ FIN VISTA TERCER PARCIAL ============ -->
-
-<button class="to-top" id="toTopBtn" aria-label="Volver arriba">
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/></svg>
-</button>
-
-<footer>
-  <p>Metodología para el Desarrollo de Proyectos TI — Ingeniería en Desarrollo de Software</p>
-  <p>Fuentes: IT Masters Mag · ISACA · PMI · ISO · The Open Group · Uptime Institute · IEEE</p>
-</footer>
-
-<script>
-// ============ VIEW SWITCHING (menú de 3 parciales) ============
-const allViews = document.querySelectorAll('.app-view');
-const navHomeBtn = document.getElementById('navHomeBtn');
-const navLinksBar = document.getElementById('navLinks');
-
-function setView(name){
-  allViews.forEach(v=>v.classList.remove('active'));
-  const target = document.getElementById('view-' + name);
-  if(target) target.classList.add('active');
-
-  // top bar: on home show the topic quick-links, otherwise show "Menú de parciales"
-  if(name === 'home'){
-    navHomeBtn.style.display = 'none';
-    navLinksBar.style.display = '';
-  } else {
-    navHomeBtn.style.display = '';
-    navLinksBar.style.display = 'none';
-  }
-
-  window.scrollTo({top:0, behavior:'instant' in window ? 'instant' : 'auto'});
-  updateProgress();
-
-  // reveal content already in the newly shown view (no scroll animation needed on switch)
-  target && target.querySelectorAll('.reveal').forEach(el=>el.classList.add('in-view'));
-
-  updateActiveNav();
-}
-
-// nav-links (only meaningful while on home, they jump into a parcial + section)
-document.querySelectorAll('.nav-links a[data-parcial]').forEach(a=>{
-  a.addEventListener('click', (e)=>{
-    e.preventDefault();
-    const parcial = a.getAttribute('data-parcial');
-    const hash = a.getAttribute('href');
-    setView(parcial);
-    requestAnimationFrame(()=>{
-      const el = document.querySelector(hash);
-      if(el) el.scrollIntoView({behavior:'smooth', block:'start'});
-    });
-  });
-});
-
-// scroll progress bar
-const progressBar = document.getElementById('scrollProgress');
-function updateProgress(){
-  const h = document.documentElement;
-  const denom = (h.scrollHeight - h.clientHeight);
-  const scrolled = denom > 0 ? (h.scrollTop) / denom * 100 : 0;
-  progressBar.style.width = scrolled + '%';
-}
-document.addEventListener('scroll', updateProgress, {passive:true});
-updateProgress();
-
-// scroll reveal (for elements revealed by normal scrolling within the active view)
-const revealEls = document.querySelectorAll('.reveal');
-const io = new IntersectionObserver((entries)=>{
-  entries.forEach(entry=>{
-    if(entry.isIntersecting){
-      entry.target.classList.add('in-view');
-      io.unobserve(entry.target);
-    }
-  });
-},{threshold:0.12, rootMargin:'0px 0px -40px 0px'});
-revealEls.forEach(el=>io.observe(el));
-// reveal whatever is already visible in the initial (home) view
-document.getElementById('view-home').querySelectorAll('.reveal').forEach(el=>el.classList.add('in-view'));
-
-// active sub-nav link highlighting (works for both the home quick-links and each parcial's subnav)
-function updateActiveNav(){
-  const activeView = document.querySelector('.app-view.active');
-  if(!activeView) return;
-  const linkGroups = [
-    Array.from(document.querySelectorAll('.nav-links a[data-parcial]')),
-    Array.from(activeView.querySelectorAll('.subnav a'))
-  ];
-  linkGroups.forEach(links=>{
-    let currentId = '';
-    links.forEach(a=>{
-      const sec = document.querySelector(a.getAttribute('href'));
-      if(sec){
-        const rect = sec.getBoundingClientRect();
-        if(rect.top <= 120){ currentId = '#' + sec.id; }
-      }
-    });
-    links.forEach(a=>a.classList.toggle('active', a.getAttribute('href') === currentId));
-  });
-}
-document.addEventListener('scroll', updateActiveNav, {passive:true});
-updateActiveNav();
-
-// back to top
-const toTopBtn = document.getElementById('toTopBtn');
-document.addEventListener('scroll', ()=>{
-  toTopBtn.classList.toggle('visible', window.scrollY > 500);
-}, {passive:true});
-toTopBtn.addEventListener('click', ()=>window.scrollTo({top:0, behavior:'smooth'}));
-</script>
+  <!-- ░░░ FOOTER ░░░ -->
+  <footer class="footer">
+    <div class="footer__xo">XO</div>
+    <p class="footer__name">THE WEEKND</p>
+    <p class="footer__credit">Abel Makkonen Tesfaye &nbsp;·&nbsp; Toronto, Canadá &nbsp;·&nbsp; 1990</p>
+    <div class="footer__line"></div>
+    <p class="footer__small">Diseño fan-made — sin fines comerciales</p>
+  </footer>
 
 </body>
 </html>
