@@ -37,7 +37,7 @@ async function obtenerTokenSpotify(): Promise<string> {
   return tokenCache.token;
 }
 
-const cacheImagenesArtistas = new Map<string, string | null>();
+const cacheImagenesArtistas = new Map<string, string>();
 
 async function obtenerImagenArtista(nombreArtista: string): Promise<string | null> {
   if (cacheImagenesArtistas.has(nombreArtista)) {
@@ -55,7 +55,14 @@ async function obtenerImagenArtista(nombreArtista: string): Promise<string | nul
     }
 
     const imagen = datos.artists?.items?.[0]?.images?.[0]?.url ?? null;
-    cacheImagenesArtistas.set(nombreArtista, imagen);
+
+    // Solo guardamos en caché cuando SÍ encontramos imagen.
+    // Si cacheáramos también los null, un fallo pasajero dejaría
+    // ese artista "atascado" sin imagen para siempre en esta instancia.
+    if (imagen) {
+      cacheImagenesArtistas.set(nombreArtista, imagen);
+    }
+
     return imagen;
   } catch (e) {
     console.error('Excepción obteniendo imagen de artista:', nombreArtista, e);
