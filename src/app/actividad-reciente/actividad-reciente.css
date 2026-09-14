@@ -1,0 +1,156 @@
+:host {
+  display: block;
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 0 24px 48px;
+}
+
+@keyframes caerVinilo {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.actividad-reciente {
+  animation: caerVinilo 0.35s ease;
+}
+
+.cabecera-seccion {
+  margin-bottom: 16px;
+}
+
+.cabecera-seccion h2 {
+  font-size: 22px;
+}
+
+.mensaje-estado {
+  color: var(--gris-tenue);
+  padding: 24px 0;
+}
+
+.lista-recientes {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.fila-reciente {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 10px 8px;
+  border-bottom: 1px solid #1C1C22;
+  transition: background 0.15s ease;
+}
+
+.fila-reciente:hover {
+  background: var(--gris-humo);
+}
+
+.fila-reciente.reproduciendo {
+  background: rgba(228, 0, 43, 0.08);
+}
+
+.portada-envoltorio {
+  position: relative;
+  width: 44px;
+  height: 44px;
+  flex-shrink: 0;
+}
+
+.portada {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.portada-vacia {
+  background: var(--gris-humo);
+}
+
+.boton-play {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(10, 10, 13, 0.55);
+  border: none;
+  color: var(--blanco-hueso);
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.15s ease;
+}
+
+.fila-reciente:hover .boton-play,
+.fila-reciente:focus-within .boton-play {
+  opacity: 1;
+}
+
+.boton-play:hover {
+  color: var(--rojo-sangre);
+}
+
+.info-cancion {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  flex: 1;
+}
+
+.titulo-cancion {
+  font-weight: 600;
+  font-size: 14px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.artista-cancion {
+  color: var(--gris-tenue);
+  font-size: 13px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.album-cancion {
+  color: var(--gris-tenue);
+}
+
+.estado-derecha {
+  flex-shrink: 0;
+  font-size: 12px;
+  color: var(--gris-tenue);
+  text-align: right;
+}
+
+.escuchando-ahora {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--rojo-sangre);
+  font-weight: 600;
+}
+
+/* Animación tipo ecualizador, como el ícono de "scrobbling now" de last.fm */
+.ecualizador {
+  display: inline-flex;
+  align-items: flex-end;
+  gap: 2px;
+  height: 12px;
+}
+
+.ecualizador span {
+  width: 3px;
+  background: var(--rojo-sangre);
+  animation: rebotar 0.9s ease-in-out infinite;
+}
+
+.ecualizador span:nth-child(1) { animation-delay: 0s; }
+.ecualizador span:nth-child(2) { animation-delay: 0.2s; }
+.ecualizador span:nth-child(3) { animation-delay: 0.4s; }
+
+@keyframes rebotar {
+  0%, 100% { height: 3px; }
+  50% { height: 12px; }
+}

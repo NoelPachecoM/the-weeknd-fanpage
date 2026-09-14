@@ -1,0 +1,25 @@
+<div class="panel-reproductor" [class.visible]="reproductorService.abierto()">
+  <button class="cerrar" (click)="reproductorService.cerrar()">✕</button>
+
+  @if (reproductorService.cancionActual(); as c) {
+    <div class="info-cancion">
+      <span class="nombre">{{ c.nombre }}</span>
+      <span class="artista">{{ c.artista }}</span>
+    </div>
+
+    @if (c.cargando) {
+      <p class="cargando-video">Buscando video...</p>
+    } @else if (c.videoId) {
+      <div class="video-wrapper">
+        <iframe
+          [src]="urlSegura(c.videoId)"
+          frameborder="0"
+          allow="autoplay; encrypted-media"
+          allowfullscreen
+        ></iframe>
+      </div>
+    } @else {
+      <p class="cargando-video">No se encontró un video para esta canción.</p>
+    }
+  }
+</div>

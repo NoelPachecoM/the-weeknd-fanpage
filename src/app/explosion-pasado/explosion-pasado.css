@@ -1,0 +1,68 @@
+:host {
+  display: block;
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 0 24px 48px;
+}
+
+@keyframes caerVinilo {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.cabecera-seccion {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.cabecera-seccion h2 {
+  font-size: 22px;
+  color: #a855f7;
+}
+
+.boton-buscar {
+  padding: 10px 20px;
+  background: var(--violeta-noche);
+  color: var(--blanco-hueso);
+  border: none;
+  cursor: pointer;
+  font-size: 13px;
+  transition: transform 0.15s ease, background 0.2s ease;
+}
+
+.boton-buscar:hover:not(:disabled) {
+  background: #7c2bc4;
+  transform: translateY(-2px);
+}
+
+.boton-buscar:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.mensaje-estado {
+  color: var(--gris-tenue);
+  padding: 24px 0;
+}
+
+.resultado-explosion {
+  animation: caerVinilo 0.4s ease;
+}
+
+.rango-fechas {
+  color: var(--gris-tenue);
+  margin-bottom: 12px;
+}
+
+.resultado-explosion h3 {
+  margin-top: 20px;
+  margin-bottom: 8px;
+  font-size: 16px;
+}
+
+.resultado-explosion ol {
+  padding-left: 20px;
+  color: var(--gris-tenue);
+}

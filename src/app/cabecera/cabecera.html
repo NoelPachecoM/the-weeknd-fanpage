@@ -1,0 +1,16 @@
+<header class="barra-superior">
+  <a class="logo" routerLink="/">Fan Points</a>
+
+  <nav class="navegacion">
+    <a routerLink="/">Buscar perfil</a>
+  </nav>
+
+  <div class="perfil-mini">
+    @if (estado.avatarUrl(); as avatar) {
+      <img [src]="avatar" [alt]="estado.nombreUsuario()" class="avatar-mini" />
+      <span class="nombre-mini">{{ estado.nombreUsuario() }}</span>
+    } @else {
+      <div class="avatar-mini avatar-vacio"></div>
+    }
+  </div>
+</header>

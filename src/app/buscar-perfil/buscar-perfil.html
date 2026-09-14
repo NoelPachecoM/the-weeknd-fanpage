@@ -1,0 +1,17 @@
+<div class="buscador">
+  <input
+    type="text"
+    id="nombreUsuario"
+    name="nombreUsuario"
+    [(ngModel)]="nombreUsuario"
+    placeholder="Nombre de usuario de Last.fm"
+    (keyup.enter)="buscar()"
+  />
+  <button (click)="buscar()" [disabled]="cargando()">
+    {{ cargando() ? 'Buscando...' : 'Buscar' }}
+  </button>
+
+  @if (error()) {
+    <p class="error">{{ error() }}</p>
+  }
+</div>

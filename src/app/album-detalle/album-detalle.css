@@ -1,0 +1,88 @@
+.detalle {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 0 24px 48px;
+}
+
+.cabecera-album {
+  height: 320px;
+  background-size: cover;
+  background-position: center;
+  background-color: var(--gris-humo);
+  display: flex;
+  align-items: flex-end;
+  margin: 0 -24px 24px;
+}
+
+.overlay-album {
+  width: 100%;
+  padding: 32px 24px;
+  background: linear-gradient(to top, rgba(10,10,13,0.95), transparent 80%);
+}
+
+.overlay-album h1 {
+  font-size: 38px;
+  color: var(--blanco-hueso);
+}
+
+.overlay-album p {
+  color: var(--gris-tenue);
+  margin: 4px 0 0;
+}
+
+.stats {
+  color: var(--gris-tenue);
+}
+
+.biografia {
+  color: var(--gris-tenue);
+  line-height: 1.6;
+  max-width: 700px;
+  margin: 16px 0 32px;
+}
+
+h2 {
+  font-size: 20px;
+  margin-bottom: 16px;
+}
+
+.lista-numerada {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.lista-numerada li {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 10px 0;
+  border-bottom: 1px solid #1C1C22;
+}
+
+.boton-play-lista {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+  background: transparent;
+  border: none;
+  color: var(--gris-tenue);
+  cursor: pointer;
+  font-size: 12px;
+  transition: color 0.15s ease;
+}
+
+.boton-play-lista:hover {
+  color: var(--rojo-sangre);
+}
+
+.lista-numerada .nombre {
+  font-weight: 600;
+}
+
+.lista-numerada .duracion {
+  margin-left: auto;
+  color: var(--gris-tenue);
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+}

@@ -1,0 +1,29 @@
+:root {
+  --negro-abismo: #0A0A0D;
+  --rojo-sangre: #E4002B;
+  --violeta-noche: #6B21A8;
+  --gris-humo: #1C1C22;
+  --blanco-hueso: #F2F0E9;
+  --gris-tenue: #8A8A93;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--negro-abismo);
+  color: var(--blanco-hueso);
+  font-family: 'Inter', sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3 {
+  font-family: 'Fraunces', serif;
+  margin: 0;
+}
+
+button {
+  font-family: 'Inter', sans-serif;
+}

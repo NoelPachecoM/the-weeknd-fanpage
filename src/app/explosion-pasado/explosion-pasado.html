@@ -1,0 +1,30 @@
+<section class="explosion">
+  <div class="cabecera-seccion">
+    <h2>✨ Explosión del pasado</h2>
+    <button class="boton-buscar" (click)="buscar()" [disabled]="cargando()">Buscar otra semana</button>
+  </div>
+
+  @if (cargando()) {
+    <p class="mensaje-estado">Buscando en el pasado...</p>
+  } @else if (explosion()?.error) {
+    <p class="mensaje-estado">{{ explosion()?.mensaje }}</p>
+  } @else {
+    <div class="resultado-explosion">
+      <p class="rango-fechas">Semana del {{ explosion()?.desde | date }} al {{ explosion()?.hasta | date }}</p>
+
+      <h3>Top artistas de esa semana</h3>
+      <ol>
+        @for (artista of explosion()?.topArtistas; track artista.nombre) {
+          <li>{{ artista.nombre }} — {{ artista.reproducciones }} plays</li>
+        }
+      </ol>
+
+      <h3>Top canciones de esa semana</h3>
+      <ol>
+        @for (cancion of explosion()?.topCanciones; track cancion.nombre) {
+          <li>{{ cancion.nombre }} ({{ cancion.artista }}) — {{ cancion.reproducciones }} plays</li>
+        }
+      </ol>
+    </div>
+  }
+</section>

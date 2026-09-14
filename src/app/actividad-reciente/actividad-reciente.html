@@ -1,0 +1,55 @@
+<section class="actividad-reciente">
+  <div class="cabecera-seccion">
+    <h2>Actividad reciente</h2>
+  </div>
+
+  @if (cargando()) {
+    <p class="mensaje-estado">Cargando actividad...</p>
+  } @else if (error()) {
+    <p class="mensaje-estado">No se pudo cargar la actividad reciente.</p>
+  } @else if (items().length === 0) {
+    <p class="mensaje-estado">Todavía no hay scrobbles.</p>
+  } @else {
+    <ul class="lista-recientes">
+      @for (item of items(); track identificarFila(item, $index)) {
+        <li class="fila-reciente" [class.reproduciendo]="item.reproduciendoAhora">
+          <div class="portada-envoltorio">
+            @if (item.imagen) {
+              <img [src]="item.imagen" [alt]="item.nombre" class="portada" />
+            } @else {
+              <div class="portada portada-vacia"></div>
+            }
+            <button class="boton-play" (click)="reproducir(item, $event)" aria-label="Reproducir {{ item.nombre }}">
+              <svg viewBox="0 0 24 24" width="14" height="14">
+                <path fill="currentColor" d="M8 5v14l11-7z" />
+              </svg>
+            </button>
+          </div>
+
+          <div class="info-cancion">
+            <span class="titulo-cancion">{{ item.nombre }}</span>
+            <span class="artista-cancion">
+              {{ item.artista }}
+              @if (item.album) {
+                <span class="album-cancion"> — {{ item.album }}</span>
+              }
+            </span>
+          </div>
+
+          <div class="estado-derecha">
+            @if (item.reproduciendoAhora) {
+              <span class="escuchando-ahora">
+                <span class="ecualizador">
+                  <span></span><span></span><span></span>
+                </span>
+                Escuchando ahora
+              </span>
+            } @else {
+              <span class="tiempo">{{ tiempoRelativo(item.fecha) }}</span>
+            }
+          </div>
+        </li>
+      }
+    </ul>
+  }
+</section>

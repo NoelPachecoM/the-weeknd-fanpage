@@ -1,0 +1,116 @@
+.detalle {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 48px 24px;
+}
+
+.cabecera-simple {
+  margin-bottom: 24px;
+}
+
+.cabecera-simple h1 {
+  font-size: 42px;
+  letter-spacing: -1px;
+}
+
+.stats {
+  color: var(--gris-tenue);
+  margin: 6px 0 0;
+}
+
+.biografia {
+  color: var(--gris-tenue);
+  line-height: 1.6;
+  max-width: 700px;
+  margin-bottom: 40px;
+}
+
+h2 {
+  font-size: 20px;
+  margin: 32px 0 16px;
+}
+
+.lista-numerada {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.lista-numerada li {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 10px 0;
+  border-bottom: 1px solid #1C1C22;
+}
+
+.boton-play-lista {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+  background: transparent;
+  border: none;
+  color: var(--gris-tenue);
+  cursor: pointer;
+  font-size: 12px;
+  transition: color 0.15s ease;
+}
+
+.boton-play-lista:hover {
+  color: var(--rojo-sangre);
+}
+
+.lista-numerada .numero {
+  color: var(--gris-tenue);
+  width: 20px;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.lista-numerada .nombre {
+  font-weight: 600;
+}
+
+.lista-numerada .artista,
+.lista-numerada .reproducciones {
+  margin-left: auto;
+  color: var(--gris-tenue);
+  font-size: 13px;
+}
+
+.grid-items {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 4px;
+}
+
+.tarjeta-grid {
+  aspect-ratio: 1;
+  background-size: cover;
+  background-position: center;
+  background-color: var(--gris-humo);
+  position: relative;
+  display: flex;
+  align-items: flex-end;
+  overflow: hidden;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.tarjeta-grid:hover {
+  transform: scale(1.06);
+  box-shadow: 0 12px 30px rgba(0,0,0,0.6);
+  z-index: 5;
+}
+
+.overlay-tarjeta {
+  width: 100%;
+  padding: 10px;
+  background: linear-gradient(to top, rgba(10,10,13,0.95), transparent 70%);
+}
+
+.overlay-tarjeta .nombre {
+  font-weight: 600;
+  font-size: 13px;
+  color: var(--blanco-hueso);
+}

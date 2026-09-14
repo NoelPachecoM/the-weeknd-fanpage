@@ -1,0 +1,53 @@
+<div class="perfil-detalle">
+  @if (cargandoPerfil()) {
+    <p class="cargando-perfil">Cargando perfil...</p>
+  } @else if (perfil(); as p) {
+    <header class="cabecera">
+      <div class="avatar-grande">
+        @if (p.imagenUrl) {
+          <img [src]="p.imagenUrl" [alt]="p.nombreUsuarioLastfm" />
+        } @else {
+          <div class="avatar-vacio-grande"></div>
+        }
+      </div>
+
+      <div class="info-cabecera">
+        <span class="insignia">{{ p.clasificacion }}</span>
+        <h1>{{ p.nombreUsuarioLastfm }}</h1>
+        @if (p.miembroDesde) {
+          <p class="subtitulo">Escuchando desde {{ p.miembroDesde | date }}</p>
+        }
+
+        <nav class="pestañas">
+          <a [routerLink]="['/perfil', nombreUsuario, 'artistas']" routerLinkActive="activa">Artistas</a>
+          <a [routerLink]="['/perfil', nombreUsuario, 'albumes']" routerLinkActive="activa">Álbumes</a>
+          <a [routerLink]="['/perfil', nombreUsuario, 'canciones']" routerLinkActive="activa">Canciones</a>
+          <a [routerLink]="['/perfil', nombreUsuario, 'actividad']" routerLinkActive="activa">Actividad</a>
+          <a [routerLink]="['/perfil', nombreUsuario, 'explosion']" routerLinkActive="activa" class="pestaña-explosion">✨ Explosión del pasado</a>
+        </nav>
+      </div>
+
+      <div class="estadisticas">
+        <div class="estadistica">
+          <span class="numero">{{ p.scrobblesTotales ?? 0 }}</span>
+          <span class="etiqueta">Scrobbles</span>
+        </div>
+        <div class="estadistica">
+          <span class="numero">{{ p.puntos }}</span>
+          <span class="etiqueta">Puntos</span>
+        </div>
+        <div class="estadistica">
+          <span class="numero">{{ p.rachaGeneralActual }}</span>
+          <span class="etiqueta">Racha días</span>
+        </div>
+      </div>
+    </header>
+
+    <div class="area-contenido">
+      <div class="columna-principal">
+        <router-outlet></router-outlet>
+      </div>
+      <app-reproductor></app-reproductor>
+    </div>
+  }
+</div>

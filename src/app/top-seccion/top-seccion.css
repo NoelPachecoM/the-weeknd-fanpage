@@ -1,0 +1,231 @@
+:host {
+  display: block;
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 0 24px 48px;
+}
+
+@keyframes caerVinilo {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.seccion-top {
+  animation: caerVinilo 0.35s ease;
+}
+
+.cabecera-seccion {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.cabecera-seccion h2 {
+  font-size: 22px;
+}
+
+.controles-seccion {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.controles-seccion select {
+  background: var(--gris-humo);
+  color: var(--gris-tenue);
+  border: 1px solid #2E2E36;
+  padding: 6px 10px;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.boton-config {
+  background: var(--gris-humo);
+  border: 1px solid #2E2E36;
+  color: var(--gris-tenue);
+  width: 32px;
+  height: 32px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.boton-config:hover {
+  border-color: var(--rojo-sangre);
+  color: var(--blanco-hueso);
+}
+
+.panel-config {
+  display: flex;
+  gap: 20px;
+  background: var(--gris-humo);
+  border: 1px solid #2E2E36;
+  padding: 16px;
+  margin-bottom: 16px;
+  animation: caerVinilo 0.2s ease;
+}
+
+.panel-config label {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 12px;
+  color: var(--gris-tenue);
+}
+
+.panel-config select {
+  background: var(--negro-abismo);
+  color: var(--blanco-hueso);
+  border: 1px solid #2E2E36;
+  padding: 6px;
+}
+
+.mensaje-estado {
+  color: var(--gris-tenue);
+  padding: 24px 0;
+}
+
+/* Vista cuadrícula (grid) */
+.grid-items {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  grid-auto-rows: 140px;
+  gap: 4px;
+}
+
+.grid-items .tarjeta-grid:first-child {
+  grid-column: span 2;
+  grid-row: span 2;
+}
+
+.tarjeta-grid {
+  background-size: cover;
+  background-position: center;
+  background-color: var(--gris-humo);
+  position: relative;
+  display: flex;
+  align-items: flex-end;
+  overflow: hidden;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  z-index: 1;
+}
+
+.tarjeta-grid.sin-enlace {
+  cursor: default;
+}
+
+.tarjeta-grid:hover {
+  transform: scale(1.06);
+  box-shadow: 0 12px 30px rgba(0,0,0,0.6);
+  z-index: 5;
+}
+
+.boton-play {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0.7);
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--rojo-sangre);
+  color: var(--blanco-hueso);
+  border: none;
+  font-size: 16px;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+  z-index: 2;
+}
+
+.tarjeta-grid:hover .boton-play {
+  opacity: 1;
+  transform: translate(-50%, -50%) scale(1);
+}
+
+.overlay-tarjeta {
+  width: 100%;
+  padding: 10px;
+  background: linear-gradient(to top, rgba(10,10,13,0.95), transparent 70%);
+  display: flex;
+  flex-direction: column;
+  color: var(--blanco-hueso);
+}
+
+.overlay-tarjeta .nombre {
+  font-weight: 600;
+  font-size: 13px;
+}
+
+.overlay-tarjeta .artista,
+.overlay-tarjeta .reproducciones {
+  font-size: 11px;
+  color: var(--gris-tenue);
+}
+
+/* Vista lista numerada */
+.lista-numerada {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.lista-numerada li {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 10px 0;
+  border-bottom: 1px solid #1C1C22;
+  cursor: pointer;
+}
+
+.lista-numerada li.sin-enlace {
+  cursor: default;
+}
+
+.lista-numerada .numero {
+  color: var(--gris-tenue);
+  width: 20px;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.boton-play-lista {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+  background: transparent;
+  border: none;
+  color: var(--gris-tenue);
+  cursor: pointer;
+  font-size: 12px;
+  transition: color 0.15s ease;
+}
+
+.boton-play-lista:hover {
+  color: var(--rojo-sangre);
+}
+
+.lista-numerada img {
+  width: 40px;
+  height: 40px;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.lista-numerada .nombre {
+  font-weight: 600;
+}
+
+.lista-numerada .artista {
+  color: var(--gris-tenue);
+  font-size: 13px;
+}
+
+.lista-numerada .reproducciones {
+  margin-left: auto;
+  color: var(--gris-tenue);
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+}

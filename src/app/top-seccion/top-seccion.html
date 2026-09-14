@@ -1,0 +1,76 @@
+<section class="seccion-top">
+  <div class="cabecera-seccion">
+    <h2>{{ titulo }}</h2>
+    <div class="controles-seccion">
+      <select (change)="cambiarPeriodo($any($event.target).value)">
+        <option value="7day" [selected]="estado().periodo === '7day'">Últimos 7 días</option>
+        <option value="1month" [selected]="estado().periodo === '1month'">Últimos 30 días</option>
+        <option value="12month" [selected]="estado().periodo === '12month'">Último año</option>
+        <option value="overall" [selected]="estado().periodo === 'overall'">Siempre</option>
+      </select>
+      <button class="boton-config" (click)="alternarConfiguracion()">⚙</button>
+    </div>
+  </div>
+
+  @if (estado().configuracionAbierta) {
+    <div class="panel-config">
+      <label>
+        Estilo
+        <select (change)="cambiarEstilo($any($event.target).value)">
+          <option value="grid" [selected]="estado().estilo === 'grid'">Cuadrícula</option>
+          <option value="lista" [selected]="estado().estilo === 'lista'">Lista</option>
+        </select>
+      </label>
+      <label>
+        Cantidad
+        <select (change)="cambiarCantidad(+$any($event.target).value)">
+          @for (n of [5, 10, 20, 30, 40, 50]; track n) {
+            <option [value]="n" [selected]="estado().cantidad === n">{{ n }}</option>
+          }
+        </select>
+      </label>
+    </div>
+  }
+
+  @if (estado().cargando) {
+    <p class="mensaje-estado">Cargando...</p>
+  } @else if (estado().items.length === 0) {
+    <p class="mensaje-estado">No hay datos para este periodo.</p>
+  } @else if (estado().estilo === 'grid') {
+    <div class="grid-items">
+      @for (item of estado().items; track item.nombre) {
+        <div
+          class="tarjeta-grid"
+          [class.sin-enlace]="!enlaceItem(item)"
+          [routerLink]="enlaceItem(item)"
+          [style.background-image]="'url(' + item.imagen + ')'"
+        >
+          @if (tipo === 'tracks') {
+            <button class="boton-play" (click)="reproducir(item, $event)">▶</button>
+          }
+          <div class="overlay-tarjeta">
+            <span class="nombre">{{ item.nombre }}</span>
+            @if (tipo !== 'artists' && item.artista) { <span class="artista">{{ item.artista }}</span> }
+            <span class="reproducciones">{{ item.reproducciones }} plays</span>
+          </div>
+        </div>
+      }
+    </div>
+  } @else {
+    <ol class="lista-numerada">
+      @for (item of estado().items; track item.nombre; let i = $index) {
+        <li [class.sin-enlace]="!enlaceItem(item)" [routerLink]="enlaceItem(item)">
+          @if (tipo === 'tracks') {
+            <button class="boton-play-lista" (click)="reproducir(item, $event)">▶</button>
+          } @else {
+            <span class="numero">{{ i + 1 }}</span>
+          }
+          @if (item.imagen) { <img [src]="item.imagen" [alt]="item.nombre" /> }
+          <span class="nombre">{{ item.nombre }}</span>
+          @if (tipo !== 'artists' && item.artista) { <span class="artista">{{ item.artista }}</span> }
+          <span class="reproducciones">{{ item.reproducciones }} plays</span>
+        </li>
+      }
+    </ol>
+  }
+</section>

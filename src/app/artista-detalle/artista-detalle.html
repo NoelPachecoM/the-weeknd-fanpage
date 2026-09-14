@@ -1,0 +1,59 @@
+<div class="detalle">
+  @if (cargando()) {
+    <p>Cargando...</p>
+  } @else if (info()?.error) {
+    <p>{{ info()?.mensaje }}</p>
+  } @else {
+    <header class="cabecera-simple">
+      <h1>{{ info()?.nombre }}</h1>
+      <p class="stats">{{ info()?.oyentes }} oyentes · Tus scrobbles: {{ info()?.scrobblesUsuario ?? 0 }}</p>
+    </header>
+
+    @if (info()?.biografia) {
+      <p class="biografia">{{ info()?.biografia }}</p>
+    }
+
+    @if (info()?.topCanciones && info()!.topCanciones!.length > 0) {
+      <h2>Canciones más populares</h2>
+      <ol class="lista-numerada">
+        @for (t of info()?.topCanciones; track t.nombre; let i = $index) {
+          <li>
+            <button class="boton-play-lista" (click)="reproducir(t.nombre)">▶</button>
+            <span class="nombre">{{ t.nombre }}</span>
+            <span class="reproducciones">{{ t.reproducciones }} plays</span>
+          </li>
+        }
+      </ol>
+    }
+
+    @if (info()?.canciones && info()!.canciones!.length > 0) {
+      <h2>Tus canciones escuchadas</h2>
+      <ol class="lista-numerada">
+        @for (c of info()?.canciones; track c.nombre; let i = $index) {
+          <li>
+            <button class="boton-play-lista" (click)="reproducir(c.nombre)">▶</button>
+            <span class="nombre">{{ c.nombre }}</span>
+            @if (c.album) { <span class="artista">{{ c.album }}</span> }
+          </li>
+        }
+      </ol>
+    }
+
+    @if (info()?.similares && info()!.similares!.length > 0) {
+      <h2>Artistas similares</h2>
+      <div class="grid-items">
+        @for (s of info()?.similares; track s.nombre) {
+          <div
+            class="tarjeta-grid"
+            [routerLink]="['/perfil', nombreUsuario, 'artista', s.nombre]"
+            [style.background-image]="'url(' + s.imagen + ')'"
+          >
+            <div class="overlay-tarjeta">
+              <span class="nombre">{{ s.nombre }}</span>
+            </div>
+          </div>
+        }
+      </div>
+    }
+  }
+</div>

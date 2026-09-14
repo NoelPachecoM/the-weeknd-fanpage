@@ -1,0 +1,31 @@
+<div class="detalle">
+  @if (cargando()) {
+    <p>Cargando...</p>
+  } @else if (info()?.error) {
+    <p>{{ info()?.mensaje }}</p>
+  } @else {
+    <div class="cabecera-album" [style.background-image]="'url(' + info()?.imagen + ')'">
+      <div class="overlay-album">
+        <h1>{{ info()?.nombre }}</h1>
+        <p>{{ info()?.artista }}</p>
+      </div>
+    </div>
+
+    <p class="stats">Tus scrobbles de este álbum: {{ info()?.scrobblesUsuario ?? 0 }}</p>
+
+    @if (info()?.resumen) {
+      <p class="biografia">{{ info()?.resumen }}</p>
+    }
+
+    <h2>Tracklist</h2>
+    <ol class="lista-numerada">
+      @for (t of info()?.tracks; track t.nombre; let i = $index) {
+        <li>
+          <button class="boton-play-lista" (click)="reproducir(t.nombre)">▶</button>
+          <span class="nombre">{{ t.nombre }}</span>
+          <span class="duracion">{{ formatoDuracion(t.duracionSegundos) }}</span>
+        </li>
+      }
+    </ol>
+  }
+</div>

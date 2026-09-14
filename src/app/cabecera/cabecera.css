@@ -1,0 +1,69 @@
+.barra-superior {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  height: 64px;
+  padding: 0 28px;
+  background: #000;
+  border-bottom: 1px solid #1C1C22;
+}
+
+.logo {
+  font-family: 'Fraunces', serif;
+  font-style: italic;
+  font-weight: 700;
+  font-size: 22px;
+  color: var(--rojo-sangre);
+  text-decoration: none;
+  letter-spacing: -0.5px;
+  white-space: nowrap;
+}
+
+.navegacion {
+  display: flex;
+  gap: 20px;
+  flex: 1;
+}
+
+.navegacion a {
+  color: var(--blanco-hueso);
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 500;
+  opacity: 0.85;
+  transition: opacity 0.15s ease;
+}
+
+.navegacion a:hover {
+  opacity: 1;
+  color: var(--rojo-sangre);
+}
+
+.perfil-mini {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.nombre-mini {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--blanco-hueso);
+}
+
+.avatar-mini {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+  border: 1px solid #2E2E36;
+}
+
+.avatar-vacio {
+  background: var(--gris-humo);
+}
