@@ -56,9 +56,6 @@ async function obtenerImagenArtista(nombreArtista: string): Promise<string | nul
 
     const imagen = datos.artists?.items?.[0]?.images?.[0]?.url ?? null;
 
-    // Solo guardamos en caché cuando SÍ encontramos imagen.
-    // Si cacheáramos también los null, un fallo pasajero dejaría
-    // ese artista "atascado" sin imagen para siempre en esta instancia.
     if (imagen) {
       cacheImagenesArtistas.set(nombreArtista, imagen);
     }
@@ -71,6 +68,8 @@ async function obtenerImagenArtista(nombreArtista: string): Promise<string | nul
 }
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
+  res.setHeader('Cache-Control', 'no-store');
+
   const usuario = req.query.usuario as string;
   const tipo = (req.query.tipo as string) ?? 'artists'; // artists | albums | tracks
   const periodo = (req.query.periodo as string) ?? '7day'; // 7day | 1month | 12month | overall

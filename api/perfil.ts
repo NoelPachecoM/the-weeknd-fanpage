@@ -10,6 +10,8 @@ const LASTFM_API_KEY = process.env.LASTFM_API_KEY;
 const ARTISTA_SEGUIDO = 'The Weeknd'; // el artista de tu fan page
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
+    res.setHeader('Cache-Control', 'no-store');
+
   const nombreUsuario = req.query.usuario as string;
 
   if (!nombreUsuario) {

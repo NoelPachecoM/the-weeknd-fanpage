@@ -38,6 +38,7 @@ async function obtenerTokenSpotify(): Promise<string> {
 }
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
+    res.setHeader('Cache-Control', 'no-store');
   const nombreArtista = req.query.nombre as string;
 
   if (!nombreArtista) {
