@@ -1,19 +1,12 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { createClient } from '@supabase/supabase-js';
 
 const SPOTIFY_CLIENT_ID = process.env.SPOTIFY_CLIENT_ID;
 const SPOTIFY_CLIENT_SECRET = process.env.SPOTIFY_CLIENT_SECRET;
 
-const supabase = createClient(
-  process.env.SUPABASE_URL!,
-  process.env.SUPABASE_SECRET_KEY!
-);
-
-const HORAS_CACHE = 24;
-
 let tokenCache: { token: string; expira: number } | null = null;
 
 async function obtenerTokenSpotify(): Promise<string> {
+  // Reutiliza el token mientras no haya expirado, para no pedir uno nuevo en cada llamada
   if (tokenCache && Date.now() < tokenCache.expira) {
     return tokenCache.token;
   }
@@ -32,7 +25,7 @@ async function obtenerTokenSpotify(): Promise<string> {
   const datos = await respuesta.json();
   tokenCache = {
     token: datos.access_token,
-    expira: Date.now() + (datos.expires_in - 60) * 1000,
+    expira: Date.now() + (datos.expires_in - 60) * 1000, // le restamos 60s de margen
   };
 
   return tokenCache.token;
@@ -45,21 +38,6 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     return res.status(400).json({ error: true, mensaje: 'Falta el nombre del artista' });
   }
 
-  // 1. Revisar si ya está en la caché de Supabase y sigue vigente
-  const { data: cacheExistente } = await supabase
-    .from('imagenes_artistas')
-    .select('imagen_url, actualizado_en')
-    .eq('nombre_artista', nombreArtista)
-    .maybeSingle();
-
-  if (cacheExistente) {
-    const horasTranscurridas = (Date.now() - new Date(cacheExistente.actualizado_en).getTime()) / (1000 * 60 * 60);
-    if (horasTranscurridas < HORAS_CACHE) {
-      return res.status(200).json({ error: false, imagen: cacheExistente.imagen_url, nombreEncontrado: nombreArtista });
-    }
-  }
-
-  // 2. No está en caché o ya expiró: pedirla a Spotify
   try {
     const token = await obtenerTokenSpotify();
 
@@ -72,19 +50,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     const artista = datos.artists?.items?.[0];
     const imagen = artista?.images?.[0]?.url ?? null;
 
-    // 3. Guardar (o actualizar) en la caché de Supabase
-    await supabase.from('imagenes_artistas').upsert({
-      nombre_artista: nombreArtista,
-      imagen_url: imagen,
-      actualizado_en: new Date().toISOString(),
-    });
-
     return res.status(200).json({ error: false, imagen, nombreEncontrado: artista?.name ?? null });
   } catch (e) {
-    // Si Spotify falla pero había algo en caché aunque expirado, mejor eso que nada
-    if (cacheExistente) {
-      return res.status(200).json({ error: false, imagen: cacheExistente.imagen_url, nombreEncontrado: nombreArtista });
-    }
     return res.status(500).json({ error: true, mensaje: 'No se pudo obtener la imagen' });
   }
 }
