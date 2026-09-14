@@ -23,6 +23,12 @@ async function obtenerTokenSpotify(): Promise<string> {
   });
 
   const datos = await respuesta.json();
+
+  if (!respuesta.ok || !datos.access_token) {
+    console.error('Error al pedir token de Spotify:', respuesta.status, datos);
+    throw new Error('No se pudo autenticar con Spotify');
+  }
+
   tokenCache = {
     token: datos.access_token,
     expira: Date.now() + (datos.expires_in - 60) * 1000, // le restamos 60s de margen
@@ -47,11 +53,16 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     });
     const datos = await respuesta.json();
 
+    if (!respuesta.ok) {
+      console.error('Error búsqueda Spotify:', nombreArtista, respuesta.status, datos);
+    }
+
     const artista = datos.artists?.items?.[0];
     const imagen = artista?.images?.[0]?.url ?? null;
 
     return res.status(200).json({ error: false, imagen, nombreEncontrado: artista?.name ?? null });
   } catch (e) {
+    console.error('Excepción obteniendo imagen de artista:', nombreArtista, e);
     return res.status(500).json({ error: true, mensaje: 'No se pudo obtener la imagen' });
   }
 }

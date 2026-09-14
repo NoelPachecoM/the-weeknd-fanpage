@@ -23,6 +23,12 @@ async function obtenerTokenSpotify(): Promise<string> {
   });
 
   const datos = await respuesta.json();
+
+  if (!respuesta.ok || !datos.access_token) {
+    console.error('Error al pedir token de Spotify:', respuesta.status, datos);
+    throw new Error('No se pudo autenticar con Spotify');
+  }
+
   tokenCache = {
     token: datos.access_token,
     expira: Date.now() + (datos.expires_in - 60) * 1000,
@@ -43,10 +49,16 @@ async function obtenerImagenArtista(nombreArtista: string): Promise<string | nul
     const url = `https://api.spotify.com/v1/search?q=${encodeURIComponent(nombreArtista)}&type=artist&limit=1`;
     const respuesta = await fetch(url, { headers: { 'Authorization': `Bearer ${token}` } });
     const datos = await respuesta.json();
+
+    if (!respuesta.ok) {
+      console.error('Error búsqueda Spotify:', nombreArtista, respuesta.status, datos);
+    }
+
     const imagen = datos.artists?.items?.[0]?.images?.[0]?.url ?? null;
     cacheImagenesArtistas.set(nombreArtista, imagen);
     return imagen;
-  } catch {
+  } catch (e) {
+    console.error('Excepción obteniendo imagen de artista:', nombreArtista, e);
     return null;
   }
 }
