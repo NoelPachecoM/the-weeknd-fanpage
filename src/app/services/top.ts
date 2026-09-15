@@ -5,6 +5,7 @@ import { Observable } from 'rxjs';
 export interface ArtistaInfo {
   error: boolean;
   nombre?: string;
+  imagen?: string | null;
   biografia?: string | null;
   oyentes?: string | null;
   scrobblesUsuario?: string | null;
