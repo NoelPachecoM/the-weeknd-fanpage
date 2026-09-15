@@ -114,3 +114,20 @@ h2 {
   font-size: 13px;
   color: var(--blanco-hueso);
 }
+.cabecera-simple {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.imagen-artista {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.imagen-vacia {
+  background: var(--gris-humo);
+}
