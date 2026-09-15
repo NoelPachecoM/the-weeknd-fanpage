@@ -43,11 +43,6 @@ async function obtenerTokenSpotify(): Promise<string> {
   return tokenCache.token;
 }
 
-function esperar(ms: number) {
-  return new Promise(resolve => setTimeout(resolve, ms));
-}
-
-// Caché rápida en memoria, solo dura mientras la función siga "caliente".
 const cacheMemoria = new Map<string, string>();
 
 async function obtenerImagenDesdeSupabase(nombreArtista: string): Promise<string | null> {
@@ -58,7 +53,7 @@ async function obtenerImagenDesdeSupabase(nombreArtista: string): Promise<string
     .maybeSingle();
 
   if (error) {
-    console.error('Error leyendo imagenes_artistas en Supabase:', nombreArtista, error);
+    console.error('[SUPABASE] Error leyendo:', nombreArtista, JSON.stringify(error));
     return null;
   }
 
@@ -73,33 +68,33 @@ async function guardarImagenEnSupabase(nombreArtista: string, imagenUrl: string)
   });
 
   if (error) {
-    console.error('Error guardando en imagenes_artistas:', nombreArtista, error);
+    console.error('[SUPABASE] Error guardando:', nombreArtista, JSON.stringify(error));
+  } else {
+    console.log('[SUPABASE] Guardado con éxito:', nombreArtista);
   }
 }
 
-async function buscarEnSpotify(nombreArtista: string, intento: number = 0): Promise<string | null> {
+async function buscarEnSpotify(nombreArtista: string): Promise<string | null> {
   try {
     const token = await obtenerTokenSpotify();
     const url = `https://api.spotify.com/v1/search?q=${encodeURIComponent(nombreArtista)}&type=artist&limit=1`;
     const respuesta = await fetch(url, { headers: { 'Authorization': `Bearer ${token}` } });
-
-    if (respuesta.status === 429 && intento < 2) {
-      const segundosEspera = parseInt(respuesta.headers.get('Retry-After') ?? '2', 10);
-      console.error(`Rate limit de Spotify para "${nombreArtista}", esperando ${segundosEspera}s (intento ${intento + 1})`);
-      await esperar((segundosEspera + 0.5) * 1000);
-      return buscarEnSpotify(nombreArtista, intento + 1);
-    }
-
     const datos = await respuesta.json();
 
     if (!respuesta.ok) {
-      console.error('Error búsqueda Spotify:', nombreArtista, respuesta.status, datos);
+      console.error('[SPOTIFY] Error búsqueda:', nombreArtista, respuesta.status, JSON.stringify(datos));
       return null;
     }
 
-    return datos.artists?.items?.[0]?.images?.[0]?.url ?? null;
+    const imagen = datos.artists?.items?.[0]?.images?.[0]?.url ?? null;
+
+    if (!imagen) {
+      console.log('[SPOTIFY] Sin resultados para:', nombreArtista, '- items encontrados:', datos.artists?.items?.length ?? 0);
+    }
+
+    return imagen;
   } catch (e) {
-    console.error('Excepción buscando en Spotify:', nombreArtista, e);
+    console.error('[SPOTIFY] Excepción:', nombreArtista, e);
     return null;
   }
 }
@@ -109,14 +104,13 @@ async function obtenerImagenArtista(nombreArtista: string): Promise<string | nul
     return cacheMemoria.get(nombreArtista) ?? null;
   }
 
-  // 1. Primero buscamos en Supabase: si ya la tenemos guardada, no gastamos cuota de Spotify.
   const imagenGuardada = await obtenerImagenDesdeSupabase(nombreArtista);
   if (imagenGuardada) {
+    console.log('[CACHE] Encontrado en Supabase:', nombreArtista);
     cacheMemoria.set(nombreArtista, imagenGuardada);
     return imagenGuardada;
   }
 
-  // 2. Si no está guardada, la pedimos a Spotify UNA vez y la guardamos para siempre.
   const imagen = await buscarEnSpotify(nombreArtista);
   if (imagen) {
     cacheMemoria.set(nombreArtista, imagen);
@@ -126,8 +120,10 @@ async function obtenerImagenArtista(nombreArtista: string): Promise<string | nul
   return imagen;
 }
 
-// Aun así seguimos yendo de a poco cuando SÍ hay que llamar a Spotify,
-// para no disparar varias peticiones nuevas al mismo tiempo.
+function esperar(ms: number) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
 async function obtenerImagenesEnTandas<T extends { nombre?: string; artista?: string }>(
   items: T[],
   obtenerClave: (item: T) => string,
@@ -153,8 +149,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   res.setHeader('Cache-Control', 'no-store');
 
   const usuario = req.query.usuario as string;
-  const tipo = (req.query.tipo as string) ?? 'artists'; // artists | albums | tracks
-  const periodo = (req.query.periodo as string) ?? '7day'; // 7day | 1month | 12month | overall
+  const tipo = (req.query.tipo as string) ?? 'artists';
+  const periodo = (req.query.periodo as string) ?? '7day';
   const limite = parseInt((req.query.limite as string) ?? '10', 10);
 
   if (!usuario) {
@@ -180,8 +176,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     imagen: item.image?.find((img: any) => img.size === 'large')?.['#text'] || null,
   }));
 
-  // Álbumes ya traen portada real de Last.fm, no se tocan.
-  // Artistas y canciones usan Spotify (con caché en Supabase) para una foto real del artista.
+  console.log(`[TOP] tipo=${tipo} usuario=${usuario} items=${resultado.length}`);
+
   if (tipo === 'artists') {
     resultado = await obtenerImagenesEnTandas(resultado, (item) => item.nombre);
   } else if (tipo === 'tracks') {
