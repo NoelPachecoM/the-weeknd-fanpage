@@ -19,6 +19,7 @@ export class ActividadReciente implements OnInit, OnDestroy {
 
   private intervaloReloj?: ReturnType<typeof setInterval>;
   private intervaloRecarga?: ReturnType<typeof setInterval>;
+  private manejadorVisibilidad = () => this.alCambiarVisibilidad();
 
   constructor(
     private route: ActivatedRoute,
@@ -31,12 +32,39 @@ export class ActividadReciente implements OnInit, OnDestroy {
     this.cargar();
 
     this.intervaloReloj = setInterval(() => this.ahora.set(Date.now()), 15000);
-    this.intervaloRecarga = setInterval(() => this.cargar(false), 30000);
+
+    // Solo recargamos en automático mientras la pestaña esté realmente visible.
+    if (!document.hidden) {
+      this.iniciarIntervaloRecarga();
+    }
+    document.addEventListener('visibilitychange', this.manejadorVisibilidad);
   }
 
   ngOnDestroy() {
     clearInterval(this.intervaloReloj);
+    this.detenerIntervaloRecarga();
+    document.removeEventListener('visibilitychange', this.manejadorVisibilidad);
+  }
+
+  private alCambiarVisibilidad() {
+    if (document.hidden) {
+      // La pestaña quedó en segundo plano: dejamos de gastar peticiones.
+      this.detenerIntervaloRecarga();
+    } else {
+      // La persona volvió a ver la pestaña: recargamos ya mismo y retomamos el intervalo.
+      this.cargar(false);
+      this.iniciarIntervaloRecarga();
+    }
+  }
+
+  private iniciarIntervaloRecarga() {
+    if (this.intervaloRecarga) return; // ya estaba corriendo, no duplicar
+    this.intervaloRecarga = setInterval(() => this.cargar(false), 30000);
+  }
+
+  private detenerIntervaloRecarga() {
     clearInterval(this.intervaloRecarga);
+    this.intervaloRecarga = undefined;
   }
 
   cargar(mostrarCargando: boolean = true) {

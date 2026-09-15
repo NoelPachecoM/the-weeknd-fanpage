@@ -10,7 +10,7 @@ const LASTFM_API_KEY = process.env.LASTFM_API_KEY;
 const ARTISTA_SEGUIDO = 'The Weeknd'; // el artista de tu fan page
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
-    res.setHeader('Cache-Control', 'no-store');
+  res.setHeader('Cache-Control', 'no-store');
 
   const nombreUsuario = req.query.usuario as string;
 
@@ -28,6 +28,11 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   }
 
   const usuarioLastfm = datosValidacion.user;
+
+  // Last.fm nos regresa el nombre "oficial" tal como está escrito en su sistema,
+  // sin importar cómo lo haya tecleado la persona. Usamos SIEMPRE esta versión
+  // para guardar en la base de datos, así nunca se crean duplicados por mayúsculas.
+  const nombreOficial: string = usuarioLastfm?.name ?? nombreUsuario;
 
   // La API regresa un arreglo de imágenes en distintos tamaños; usamos la más grande disponible.
   const imagenesDisponibles: { size: string; '#text': string }[] = usuarioLastfm?.image ?? [];
@@ -47,15 +52,15 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   const datosHistorial = await respuestaHistorial.json();
   const canciones = datosHistorial.recenttracks?.track ?? [];
 
-  // 3. Buscar si ya existe el perfil en Supabase
+  // 3. Buscar si ya existe el perfil en Supabase, sin importar mayúsculas/minúsculas
   const { data: perfilExistente } = await supabase
     .from('perfiles')
     .select('*')
-    .eq('nombre_usuario_lastfm', nombreUsuario)
+    .ilike('nombre_usuario_lastfm', nombreOficial)
     .maybeSingle();
 
   let perfil = perfilExistente ?? {
-    nombre_usuario_lastfm: nombreUsuario,
+    nombre_usuario_lastfm: nombreOficial,
     puntos: 0,
     racha_artista_actual: 0,
     racha_artista_mas_larga: 0,
@@ -65,6 +70,10 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     ultima_fecha_escucha_artista: null as string | null,
     ultima_fecha_escucha_general: null as string | null,
   };
+
+  // Si el perfil ya existía pero con una ortografía distinta guardada
+  // (de antes de este arreglo), lo actualizamos a la oficial.
+  perfil.nombre_usuario_lastfm = nombreOficial;
 
   // 4. Filtrar solo canciones nuevas (que no hayamos contado ya)
   const cancionesNuevas: any[] = [];
@@ -100,6 +109,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     }
 
     // 6. Guardar en Supabase (crea si no existía, actualiza si sí)
+    await supabase.from('perfiles').upsert(perfil);
+  } else if (perfilExistente && perfilExistente.nombre_usuario_lastfm !== nombreOficial) {
+    // No hubo canciones nuevas, pero sí corregimos la ortografía guardada: la actualizamos igual.
     await supabase.from('perfiles').upsert(perfil);
   }
 
