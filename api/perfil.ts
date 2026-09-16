@@ -29,12 +29,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
   const usuarioLastfm = datosValidacion.user;
 
-  // Last.fm nos regresa el nombre "oficial" tal como está escrito en su sistema,
-  // sin importar cómo lo haya tecleado la persona. Usamos SIEMPRE esta versión
-  // para guardar en la base de datos, así nunca se crean duplicados por mayúsculas.
+  // Nombre "oficial" según Last.fm, solo se usa si hay que CREAR el perfil por primera vez.
   const nombreOficial: string = usuarioLastfm?.name ?? nombreUsuario;
 
-  // La API regresa un arreglo de imágenes en distintos tamaños; usamos la más grande disponible.
   const imagenesDisponibles: { size: string; '#text': string }[] = usuarioLastfm?.image ?? [];
   const imagenUrl =
     imagenesDisponibles.find(img => img.size === 'extralarge')?.['#text'] ||
@@ -56,9 +53,14 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   const { data: perfilExistente } = await supabase
     .from('perfiles')
     .select('*')
-    .ilike('nombre_usuario_lastfm', nombreOficial)
+    .ilike('nombre_usuario_lastfm', nombreUsuario)
     .maybeSingle();
 
+  // IMPORTANTE: nombre_usuario_lastfm es la llave primaria de la tabla.
+  // Si el perfil YA existía, nos quedamos con la ortografía que ya tenía guardada
+  // (nunca la tocamos) — cambiarla rompería el upsert y crearía una fila duplicada,
+  // porque Postgres compara la llave primaria de forma exacta.
+  // Solo usamos "nombreOficial" al crear el perfil por primera vez.
   let perfil = perfilExistente ?? {
     nombre_usuario_lastfm: nombreOficial,
     puntos: 0,
@@ -71,34 +73,26 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     ultima_fecha_escucha_general: null as string | null,
   };
 
-  // Si el perfil ya existía pero con una ortografía distinta guardada
-  // (de antes de este arreglo), lo actualizamos a la oficial.
-  perfil.nombre_usuario_lastfm = nombreOficial;
-
   // 4. Filtrar solo canciones nuevas (que no hayamos contado ya)
   const cancionesNuevas: any[] = [];
   for (const cancion of canciones) {
-    // la canción que está sonando "ahora mismo" no trae fecha (@attr nowplaying), la ignoramos
     if (cancion['@attr']?.nowplaying) continue;
 
     const idCancion = `${cancion.artist['#text']}-${cancion.name}-${cancion.date?.uts}`;
-    if (idCancion === perfil.ultima_cancion_contada) break; // ya llegamos a lo que ya habíamos contado
+    if (idCancion === perfil.ultima_cancion_contada) break;
     cancionesNuevas.push({ ...cancion, idCancion });
   }
 
   if (cancionesNuevas.length > 0) {
-    // 5. Sumar puntos por cada canción nueva (1 punto c/u)
     perfil.puntos += cancionesNuevas.length;
     perfil.ultima_cancion_contada = cancionesNuevas[0].idCancion;
 
     const hoy = new Date().toISOString().split('T')[0];
 
-    // Racha general: ¿escuchó algo hoy?
     perfil.racha_general_actual = actualizarRacha(perfil.ultima_fecha_escucha_general, hoy, perfil.racha_general_actual);
     perfil.racha_general_mas_larga = Math.max(perfil.racha_general_mas_larga, perfil.racha_general_actual);
     perfil.ultima_fecha_escucha_general = hoy;
 
-    // Racha de artista: ¿alguna de las canciones nuevas es del artista seguido?
     const escuchoAlArtista = cancionesNuevas.some(
       c => c.artist['#text'].toLowerCase() === ARTISTA_SEGUIDO.toLowerCase()
     );
@@ -108,10 +102,6 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       perfil.ultima_fecha_escucha_artista = hoy;
     }
 
-    // 6. Guardar en Supabase (crea si no existía, actualiza si sí)
-    await supabase.from('perfiles').upsert(perfil);
-  } else if (perfilExistente && perfilExistente.nombre_usuario_lastfm !== nombreOficial) {
-    // No hubo canciones nuevas, pero sí corregimos la ortografía guardada: la actualizamos igual.
     await supabase.from('perfiles').upsert(perfil);
   }
 
@@ -130,7 +120,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
 function actualizarRacha(ultimaFecha: string | null, hoy: string, rachaActual: number): number {
   if (!ultimaFecha) return 1;
-  if (ultimaFecha === hoy) return rachaActual; // ya se había contado hoy, no duplicar
+  if (ultimaFecha === hoy) return rachaActual;
   const ayer = new Date();
   ayer.setDate(ayer.getDate() - 1);
   const ayerStr = ayer.toISOString().split('T')[0];
