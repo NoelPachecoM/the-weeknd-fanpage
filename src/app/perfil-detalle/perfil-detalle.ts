@@ -5,11 +5,12 @@ import { Subscription } from 'rxjs';
 import { PerfilService } from '../services/perfil';
 import { PerfilFan } from '../models/perfil-fan';
 import { EstadoInterfaz } from '../services/estado-interfaz';
+import { Reproductor } from '../reproductor/reproductor';
 
 @Component({
   selector: 'app-perfil-detalle',
   standalone: true,
-  imports: [DatePipe, RouterLink, RouterLinkActive, RouterOutlet],
+  imports: [DatePipe, RouterLink, RouterLinkActive, RouterOutlet, Reproductor],
   templateUrl: './perfil-detalle.html',
   styleUrl: './perfil-detalle.css'
 })
